@@ -118,8 +118,8 @@ function App() {
                                                         }
                                                         formProps={{
                                                             defaultValues: {
-                                                                email: "info@refine.dev",
-                                                                password: "refine-supabase",
+                                                                email: "",
+                                                                password: "",
                                                             },
                                                         }}
                                                         providers={[

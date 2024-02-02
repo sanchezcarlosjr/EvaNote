@@ -4,14 +4,14 @@ import {AppIcon} from "../app-icon";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
-import {useActiveAuthProvider, useGetIdentity, useGetLocale, useSetLocale} from "@refinedev/core";
+import {useActiveAuthProvider, useGetIdentity, useGetLocale, useLogout, useSetLocale} from "@refinedev/core";
 import {capitalize, ListItemIcon, Popover} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import i18n from "i18next";
 import MenuItem from "@mui/material/MenuItem";
 import {ColorModeContext} from "../../contexts/color-mode";
-import {ContentPaste} from "@mui/icons-material";
+import {ContentPaste, LogoutOutlined} from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
 import LightModeOutlined from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlined from "@mui/icons-material/DarkModeOutlined";
@@ -27,12 +27,14 @@ export const Title = ({collapsed = true,}) => {
     const changeLanguage = useSetLocale();
     const locale = useGetLocale();
     const currentLocale = locale();
+    const { mutate: logout } = useLogout();
+
 
     const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
 
     const onStackClick = (event:  React.MouseEvent<HTMLDivElement>) => setAnchorEl(event.currentTarget);
 
-    const onClosePopover = (e) => {
+    const onClosePopover = (e: Event) => {
         e.preventDefault();
         setAnchorEl(null);
     };
@@ -153,6 +155,17 @@ export const Title = ({collapsed = true,}) => {
                     {mode === "dark" ? <LightModeOutlined fontSize="small" /> : <DarkModeOutlined fontSize="small"/>}
                 </ListItemIcon>
                 <ListItemText>{capitalize(mode)}</ListItemText>
+            </MenuItem>
+
+            <MenuItem
+                onClick={() => {
+                    logout({redirectPath: 'login'});
+                }}
+            >
+                <ListItemIcon color="inherit">
+                    <LogoutOutlined />
+                </ListItemIcon>
+                <ListItemText>Logout</ListItemText>
             </MenuItem>
         </Popover>
     </>;

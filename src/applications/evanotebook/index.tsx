@@ -55,5 +55,5 @@ export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
         color: identity?.color ?? "",
     })
 
-    return <BlockNoteView theme={mode} editor={editor} />;
+    return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor} />;
 };
