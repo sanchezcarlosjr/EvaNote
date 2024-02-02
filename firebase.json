@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "dist",
-    "site": "evanotebook-v2",
+    "site": "evanote",
     "ignore": [
       "firebase.json",
       "**/.*",

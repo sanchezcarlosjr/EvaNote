@@ -10,6 +10,9 @@ const authProvider: AuthBindings = {
       if (providerName) {
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
           provider: providerName,
+          options: {
+            redirectTo: import.meta.env.BASE_URL
+          }
         });
 
         if (error) {
