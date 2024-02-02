@@ -1,13 +1,13 @@
-import {Authenticated, GitHubBanner, Refine, useTranslate} from "@refinedev/core";
+import {Authenticated, GitHubBanner, Refine, useGetIdentity, useTranslate} from "@refinedev/core";
 import {DevtoolsPanel, DevtoolsProvider} from "@refinedev/devtools";
 import {RefineKbar, RefineKbarProvider} from "@refinedev/kbar";
-import {GitHub, Google} from "@mui/icons-material";
+import {GitHub, Google, Try} from "@mui/icons-material";
 
 import {
     AuthPage,
     ErrorComponent,
     notificationProvider,
-    RefineSnackbarProvider,
+    RefineSnackbarProvider, ThemedHeaderV2,
     ThemedLayoutV2,
     ThemedTitleV2,
 } from "@refinedev/mui";
@@ -25,25 +25,18 @@ import {useTranslation} from "react-i18next";
 import {BrowserRouter, Outlet, Route, Routes} from "react-router-dom";
 import authProvider from "./authProvider";
 import {AppIcon} from "./components/app-icon";
-import {Header} from "./components/header";
+import {Header} from "./components";
 import {ColorModeContextProvider} from "./contexts/color-mode";
-import {
-    BlogPostCreate,
-    BlogPostEdit,
-    BlogPostList,
-    BlogPostShow,
-} from "./pages/blog-posts";
-import {
-    CategoryCreate,
-    CategoryEdit,
-    CategoryList,
-    CategoryShow,
-} from "./pages/categories";
 import {supabaseClient} from "./utility";
 import {Evanotebook} from "./applications/evanotebook";
+import {ThemedSiderV2} from "./components/layout/sider";
+import {useUniformResourceIdentifiers} from "./uniform-resource-identifiers";
+import {Title} from "./components/title";
 
 function App() {
     const {t, i18n} = useTranslation();
+
+    const resources = useUniformResourceIdentifiers();
 
     const i18nProvider = {
         translate: (key: string, params: object) => t(key, params),
@@ -66,13 +59,7 @@ function App() {
                                 routerProvider={routerBindings}
                                 notificationProvider={notificationProvider}
                                 i18nProvider={i18nProvider}
-                                resources={[
-                                    {
-                                        name: "Resource 1",
-                                        identifier: "url",
-                                        show: "applications/evanotebook"
-                                    }
-                                ]}
+                                resources={resources}
                                 options={{
                                     syncWithLocation: true,
                                     warnWhenUnsavedChanges: true,
@@ -80,107 +67,101 @@ function App() {
                                     projectId: "pjfDKi-64ao4Z-zGOW6b",
                                 }}
                             >
-                                <Routes>
-                                    <Route
-                                        element={
-                                            <Authenticated
-                                                key="authenticated-inner"
-                                                fallback={<CatchAllNavigate to="/login"/>}
-                                            >
-                                                <ThemedLayoutV2
-                                                    Header={() => <Header sticky/>}
-                                                    Title={({collapsed}) => (
-                                                        <ThemedTitleV2
-                                                            collapsed={collapsed}
-                                                            text={import.meta.env.VITE_APP_NAME}
-                                                            icon={<AppIcon/>}
-                                                        />
-                                                    )}
-                                                >
-                                                    <Outlet/>
-                                                </ThemedLayoutV2>
-                                            </Authenticated>
-                                        }
-                                    >
+                                    <Routes>
                                         <Route
-                                            index
-                                            element={<NavigateToResource resource="blog_posts"/>}
-                                        />
-                                        {/*:/application?uri=:uri*/}
-                                        <Route path="/evanotebook">
-                                            <Route index element={<Evanotebook/>}/>
-                                        </Route>
-                                        <Route path="*" element={<ErrorComponent/>}/>
-                                    </Route>
-                                    <Route
-                                        element={
-                                            <Authenticated
-                                                key="authenticated-outer"
-                                                fallback={<Outlet/>}
-                                            >
-                                                <NavigateToResource/>
-                                            </Authenticated>
-                                        }
-                                    >
-                                        <Route
-                                            path="/login"
                                             element={
-                                                <AuthPage
-                                                    type="login"
-                                                    title={
-                                                        <ThemedTitleV2
-                                                            collapsed={false}
-                                                            text={import.meta.env.VITE_APP_NAME}
-                                                            icon={<AppIcon/>}
-                                                        />
-                                                    }
-                                                    formProps={{
-                                                        defaultValues: {
-                                                            email: "info@refine.dev",
-                                                            password: "refine-supabase",
-                                                        },
-                                                    }}
-                                                    providers={[
-                                                        {
-                                                            name: "google",
-                                                            label: "Sign in with Google",
-                                                            icon:
-                                                                <Google
-                                                                    style={{
-                                                                        fontSize: 18,
-                                                                        lineHeight: 0,
-                                                                    }}
-                                                                />
-                                                        },
-                                                        {
-                                                            name: "github",
-                                                            label: "Sign in with GitHub",
-                                                            icon:
-                                                                <GitHub
-                                                                    style={{
-                                                                        fontSize: 18,
-                                                                        lineHeight: 0,
-                                                                    }}
-                                                                />
-                                                        },
-                                                    ]}
-                                                />
+                                                <Authenticated
+                                                    key="authenticated-inner"
+                                                    fallback={<CatchAllNavigate to="/login"/>}
+                                                >
+                                                    <ThemedLayoutV2
+                                                        Header={() => <Header sticky/>}
+                                                        Sider={ThemedSiderV2}
+                                                        Title={Title}
+                                                    >
+                                                        <Outlet/>
+                                                    </ThemedLayoutV2>
+                                                </Authenticated>
                                             }
-                                        />
+                                        >
+                                            {/*:/application?uri=:uri*/}
+                                            <Route
+                                                index
+                                                element={<NavigateToResource resource="file:///tmp/getting-started"/>}
+                                            />
+                                            <Route path="/evanotebook">
+                                                <Route index element={<Evanotebook/>}/>
+                                            </Route>
+                                            <Route path="*" element={<ErrorComponent/>}/>
+                                        </Route>
                                         <Route
-                                            path="/register"
-                                            element={<AuthPage type="register"/>}
-                                        />
-                                        <Route
-                                            path="/forgot-password"
-                                            element={<AuthPage type="forgotPassword"/>}
-                                        />
-                                    </Route>
-                                </Routes>
-
-                                <RefineKbar/>
-                                <UnsavedChangesNotifier/>
-                                <DocumentTitleHandler/>
+                                            element={
+                                                <Authenticated
+                                                    key="authenticated-outer"
+                                                    fallback={<Outlet/>}
+                                                >
+                                                    <NavigateToResource/>
+                                                </Authenticated>
+                                            }
+                                        >
+                                            <Route
+                                                path="/login"
+                                                element={
+                                                    <AuthPage
+                                                        type="login"
+                                                        title={
+                                                            <ThemedTitleV2
+                                                                collapsed={false}
+                                                                text={import.meta.env.VITE_APP_NAME}
+                                                                icon={<AppIcon/>}
+                                                            />
+                                                        }
+                                                        formProps={{
+                                                            defaultValues: {
+                                                                email: "info@refine.dev",
+                                                                password: "refine-supabase",
+                                                            },
+                                                        }}
+                                                        providers={[
+                                                            {
+                                                                name: "google",
+                                                                label: "Sign in with Google",
+                                                                icon:
+                                                                    <Google
+                                                                        style={{
+                                                                            fontSize: 18,
+                                                                            lineHeight: 0,
+                                                                        }}
+                                                                    />
+                                                            },
+                                                            {
+                                                                name: "github",
+                                                                label: "Sign in with GitHub",
+                                                                icon:
+                                                                    <GitHub
+                                                                        style={{
+                                                                            fontSize: 18,
+                                                                            lineHeight: 0,
+                                                                        }}
+                                                                    />
+                                                            },
+                                                        ]}
+                                                    />
+                                                }
+                                            />
+                                            <Route
+                                                path="/register"
+                                                element={<AuthPage type="register"/>}
+                                            />
+                                            <Route
+                                                path="/forgot-password"
+                                                element={<AuthPage type="forgotPassword"/>}
+                                            />
+                                        </Route>
+                                    </Routes>
+                                    <RefineKbar/>
+                                    <UnsavedChangesNotifier/>
+                                    <DocumentTitleHandler/>
                             </Refine>
                             <DevtoolsPanel/>
                         </DevtoolsProvider>

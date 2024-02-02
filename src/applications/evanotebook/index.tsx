@@ -24,7 +24,7 @@ export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
     const { mode } = useContext(ColorModeContext);
     const { data: identity } = useGetIdentity<any>();
     const url = useQuery();
-    const room = url.get("uri") ?? "file:///tmp/evanotebook";
+    const room = url.get("uri") ?? "file:///tmp/getting-started";
 
     const doc = new Doc();
     new IndexeddbPersistence(room, doc);
