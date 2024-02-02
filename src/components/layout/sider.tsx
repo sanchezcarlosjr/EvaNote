@@ -37,6 +37,31 @@ import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import type { RefineThemedLayoutV2SiderProps } from "@refinedev/mui";
 import {Simulate} from "react-dom/test-utils";
+import {Divider, Menu, MenuList, Popover} from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import {
+    ContentCopyOutlined,
+    ContentCut,
+    ContentCutOutlined,
+    CopyAllOutlined,
+    DeleteOutlineOutlined,
+    DifferenceOutlined,
+    DriveFileMoveOutlined,
+    DriveFileRenameOutlineOutlined,
+    EnhancedEncryptionOutlined,
+    FileOpen,
+    FileOpenOutlined,
+    FolderCopyOutlined,
+    HistoryOutlined,
+    InsertLinkOutlined,
+    LaunchOutlined, ShareOutlined,
+    Sort,
+    SortOutlined,
+    StarBorderPurple500Outlined,
+    Terminal,
+    TerminalOutlined
+} from "@mui/icons-material";
 
 export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
   Title: TitleFromProps,
@@ -55,16 +80,6 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
     if (siderCollapsed) return 56;
     return 240;
   };
-
-  function onResourceContextMenu(e) {
-      e.preventDefault();
-      console.log("Right click");
-  }
-
-    function onSiderContextMenu(e) {
-        e.preventDefault();
-        console.log("Right click Sider");
-    }
 
   const t = useTranslate();
   const routerType = useRouterType();
@@ -86,7 +101,33 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
 
   const [open, setOpen] = useState<{ [k: string]: any }>({});
 
-  React.useEffect(() => {
+    const [contextMenu, setContextMenu] = React.useState<{
+        mouseX: number;
+        mouseY: number;
+    } | null>(null);
+
+    const handleContextMenu = (event: React.MouseEvent) => {
+        event.preventDefault();
+        setContextMenu(
+            contextMenu === null
+                ? {
+                    mouseX: event.clientX + 2,
+                    mouseY: event.clientY - 6,
+                }
+                : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+                  // Other native context menus might behave different.
+                  // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+                null,
+        );
+    };
+
+    const handleClose = () => {
+        setContextMenu(null);
+    };
+
+
+
+    React.useEffect(() => {
     setOpen((previous) => {
       const previousKeys: string[] = Object.keys(previous);
       const previousOpenKeys = previousKeys.filter((key) => previous[key]);
@@ -221,7 +262,6 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
               to={route}
               selected={isSelected}
               style={linkStyle}
-              onContextMenu={onResourceContextMenu}
               onClick={() => {
                 setMobileSiderOpen(false);
               }}
@@ -389,7 +429,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
   );
 
   return (
-    <>
+    <div onContextMenu={handleContextMenu}>
       <Box
         sx={{
           width: { xs: drawerWidth() },
@@ -408,7 +448,6 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
           width: { sm: drawerWidth() },
           display: "flex",
         }}
-        onContextMenu={onSiderContextMenu}
       >
         <Drawer
           variant="temporary"
@@ -492,6 +531,190 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
           </Box>
         </Drawer>
       </Box>
-    </>
+        <Menu
+            open={contextMenu !== null}
+            anchorReference="anchorPosition"
+            anchorPosition={
+                contextMenu !== null
+                    ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                    : undefined
+            }
+            anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'center',
+            }}
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+            }}
+        >
+            <MenuList dense>
+                <MenuItem onClick={handleClose}>
+                    <ListItemText>New</ListItemText>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <FileOpenOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Open with EvaNotebook</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <FileOpenOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Open with</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <ContentCut fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Cut</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <ContentCopyOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Copy</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <FolderCopyOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Copy Location</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <FolderCopyOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Copy Name</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <CopyAllOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Duplicate Here</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <DriveFileRenameOutlineOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Rename</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <DeleteOutlineOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Move to Trash</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <SortOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Sort by</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <StarBorderPurple500Outlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Add to Favorites</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <InsertLinkOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Copy link</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <ShareOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Share</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <DriveFileMoveOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Move to</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <LaunchOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Open in new tab</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <DifferenceOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Compare with</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleClose}>
+                    <ListItemText>Properties</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemText>View mode</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <TerminalOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Open terminal here</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <EnhancedEncryptionOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Sign & Encrypt</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemText>Show additional information</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <HistoryOutlined fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Show History</ListItemText>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                </MenuItem>
+            </MenuList>
+        </Menu>
+    </div>
   );
 };
