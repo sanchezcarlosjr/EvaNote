@@ -140,8 +140,9 @@
     }
   },
   "documentTitle": {
-    "default": "refine",
-    "suffix": " | refine",
+    "default": "EvaNote",
+    "suffix": " | EvaNote",
+    "auth": "EvaNote",
     "blog_posts": {
       "list": "Blog Posts | refine",
       "show": "#{{id}} Show Blog Post | refine",

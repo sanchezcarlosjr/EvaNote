@@ -1,6 +1,7 @@
 import { AuthBindings } from "@refinedev/core";
 
 import { supabaseClient } from "./utility";
+import uniqolor from 'uniqolor';
 
 const authProvider: AuthBindings = {
   login: async ({ email, password, providerName }) => {
@@ -228,9 +229,12 @@ const authProvider: AuthBindings = {
     const { data } = await supabaseClient.auth.getUser();
 
     if (data?.user) {
+      const color = uniqolor(data?.user?.email ?? "anonymous").color;
+
       return {
         ...data.user,
         name: data.user.email,
+        color
       };
     }
 
