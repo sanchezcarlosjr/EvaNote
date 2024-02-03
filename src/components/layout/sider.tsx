@@ -393,7 +393,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
     if (render) {
       return render({
         dashboard,
-        logout,
+        logout: null,
         items,
         collapsed: siderCollapsed,
       });
