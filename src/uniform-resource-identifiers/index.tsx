@@ -19,17 +19,5 @@ export function useUniformResourceIdentifiers(){
 
     console.log(playbook);
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => setResources(r => [...r,  {
-    //         name: `file:///home/${crypto.randomUUID()}/getting-started`,
-    //         meta: {
-    //             label: "Getting started",
-    //             icon: <Try/>
-    //         },
-    //         list: `/evanotebook?uri=file:///home/${crypto.randomUUID()}/getting-started`
-    //     }]), 5000);
-    //     return () => clearInterval(interval);
-    // }, []);
-
     return resources;
 }

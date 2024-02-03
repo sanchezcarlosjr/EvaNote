@@ -55,13 +55,14 @@ import {
     FolderCopyOutlined,
     HistoryOutlined,
     InsertLinkOutlined,
-    LaunchOutlined, ShareOutlined,
+    LaunchOutlined, Search, ShareOutlined,
     Sort,
     SortOutlined,
     StarBorderPurple500Outlined,
     Terminal,
     TerminalOutlined
 } from "@mui/icons-material";
+import {useKBar} from "@refinedev/kbar";
 
 export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
   Title: TitleFromProps,
@@ -343,59 +344,48 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
     </CanAccess>
   ) : null;
 
-  const handleLogout = () => {
-    if (warnWhen) {
-      const confirm = window.confirm(
-        t(
-          "warnWhenUnsavedChanges",
-          "Are you sure you want to leave? You have unsaved changes."
-        )
-      );
+    const { query } = useKBar();
 
-      if (confirm) {
-        setWarnWhen(false);
-        mutateLogout();
-      }
-    } else {
-      mutateLogout();
-    }
-  };
-
-  const logout = isExistAuthentication && (
-    <Tooltip
-      title={t("buttons.logout", "Logout")}
-      placement="right"
-      disableHoverListener={!siderCollapsed}
-      arrow
-    >
-      <ListItemButton
-        key="logout"
-        onClick={() => handleLogout()}
-        sx={{
-          justifyContent: "center",
-        }}
-      >
-        <ListItemIcon
-          sx={{
-            justifyContent: "center",
-            minWidth: "24px",
-            transition: "margin-right 0.3s",
-            marginRight: siderCollapsed ? "0px" : "12px",
-            color: "currentColor",
-          }}
+    const search = (
+        <Tooltip
+            title={t("buttons.search", "Search") + " Ctrl+K"}
+            placement="right"
+            disableHoverListener={!siderCollapsed}
+            arrow
         >
-          <Logout />
-        </ListItemIcon>
-        <ListItemText
-          primary={t("buttons.logout", "Logout")}
-          primaryTypographyProps={{
-            noWrap: true,
-            fontSize: "14px",
-          }}
-        />
-      </ListItemButton>
-    </Tooltip>
-  );
+            <ListItemButton
+                key="search"
+                onClick={query.toggle}
+                sx={{
+                    justifyContent: "center",
+                }}
+            >
+                <ListItemIcon
+                    sx={{
+                        justifyContent: "center",
+                        minWidth: "24px",
+                        transition: "margin-right 0.3s",
+                        marginRight: siderCollapsed ? "0px" : "12px",
+                        color: "currentColor",
+                    }}
+                >
+                    <Search />
+                </ListItemIcon>
+                <ListItemText
+                    primary={t("buttons.search", "Search")}
+                    secondary={"Ctrl+K"}
+                    secondaryTypographyProps={{
+                        noWrap: true,
+                        fontSize: "10px",
+                    }}
+                    primaryTypographyProps={{
+                        noWrap: true,
+                        fontSize: "14px",
+                    }}
+                />
+            </ListItemButton>
+        </Tooltip>
+    );
 
   const items = renderTreeView(menuItems, selectedKey);
 
@@ -410,6 +400,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
     }
     return (
       <>
+          {search}
         {dashboard}
         {items}
       </>
