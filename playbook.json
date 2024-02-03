@@ -1,0 +1,19 @@
+{
+  "name": "Default playbook",
+  "services": [
+    {
+      "uri": "",
+      "label": "Supabase",
+      "headers": {
+        "Authorization": "{{'Bearer '+.token}}"
+      }
+    }
+  ],
+  "settings": {
+     "language": "auto",
+     "theme": {
+       "mode": "auto"
+     }
+  },
+  "tasks": []
+}

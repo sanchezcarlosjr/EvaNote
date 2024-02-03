@@ -32,8 +32,10 @@ import {Evanotebook} from "./applications/evanotebook";
 import {ThemedSiderV2} from "./components/layout/sider";
 import {useUniformResourceIdentifiers} from "./uniform-resource-identifiers";
 import {Title} from "./components/title";
+import {ProvisionContextProvider} from "./contexts/provision";
 
-function App() {
+
+function ProvisionedRefine() {
     const {t, i18n} = useTranslation();
 
     const resources = useUniformResourceIdentifiers();
@@ -44,6 +46,120 @@ function App() {
         getLocale: () => i18n.language,
     };
 
+    return <Refine
+        dataProvider={dataProvider(supabaseClient)}
+        liveProvider={liveProvider(supabaseClient)}
+        authProvider={authProvider}
+        routerProvider={routerBindings}
+        notificationProvider={notificationProvider}
+        i18nProvider={i18nProvider}
+        resources={resources}
+        options={{
+            syncWithLocation: true,
+            warnWhenUnsavedChanges: true,
+            useNewQueryKeys: true,
+            projectId: "pjfDKi-64ao4Z-zGOW6b",
+        }}
+    >
+        <Routes>
+            <Route
+                element={
+                    <Authenticated
+                        key="authenticated-inner"
+                        fallback={<CatchAllNavigate to="/login"/>}
+                    >
+                        <ThemedLayoutV2
+                            Header={() => <Header sticky/>}
+                            Sider={ThemedSiderV2}
+                            Title={Title}
+                        >
+                            <Outlet/>
+                        </ThemedLayoutV2>
+                    </Authenticated>
+                }
+            >
+                {/*:/application?uri=:uri*/}
+                <Route
+                    index
+                    element={<NavigateToResource resource="file:///tmp/getting-started"/>}
+                />
+                <Route path="/evanotebook">
+                    <Route index element={<Evanotebook/>}/>
+                </Route>
+                <Route path="*" element={<ErrorComponent/>}/>
+            </Route>
+            <Route
+                element={
+                    <Authenticated
+                        key="authenticated-outer"
+                        fallback={<Outlet/>}
+                    >
+                        <NavigateToResource/>
+                    </Authenticated>
+                }
+            >
+                <Route
+                    path="/login"
+                    element={
+                        <AuthPage
+                            type="login"
+                            title={
+                                <ThemedTitleV2
+                                    collapsed={false}
+                                    text={import.meta.env.VITE_APP_NAME}
+                                    icon={<AppIcon/>}
+                                />
+                            }
+                            formProps={{
+                                defaultValues: {
+                                    email: "",
+                                    password: "",
+                                },
+                            }}
+                            providers={[
+                                {
+                                    name: "google",
+                                    label: "Sign in with Google",
+                                    icon:
+                                        <Google
+                                            style={{
+                                                fontSize: 18,
+                                                lineHeight: 0,
+                                            }}
+                                        />
+                                },
+                                {
+                                    name: "github",
+                                    label: "Sign in with GitHub",
+                                    icon:
+                                        <GitHub
+                                            style={{
+                                                fontSize: 18,
+                                                lineHeight: 0,
+                                            }}
+                                        />
+                                },
+                            ]}
+                        />
+                    }
+                />
+                <Route
+                    path="/register"
+                    element={<AuthPage type="register"/>}
+                />
+                <Route
+                    path="/forgot-password"
+                    element={<AuthPage type="forgotPassword"/>}
+                />
+            </Route>
+        </Routes>
+        <RefineKbar/>
+        <UnsavedChangesNotifier/>
+        <DocumentTitleHandler/>
+    </Refine>;
+}
+
+function App() {
     return (
         <BrowserRouter>
             <RefineKbarProvider>
@@ -52,117 +168,9 @@ function App() {
                     <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto"}}}/>
                     <RefineSnackbarProvider>
                         <DevtoolsProvider>
-                            <Refine
-                                dataProvider={dataProvider(supabaseClient)}
-                                liveProvider={liveProvider(supabaseClient)}
-                                authProvider={authProvider}
-                                routerProvider={routerBindings}
-                                notificationProvider={notificationProvider}
-                                i18nProvider={i18nProvider}
-                                resources={resources}
-                                options={{
-                                    syncWithLocation: true,
-                                    warnWhenUnsavedChanges: true,
-                                    useNewQueryKeys: true,
-                                    projectId: "pjfDKi-64ao4Z-zGOW6b",
-                                }}
-                            >
-                                    <Routes>
-                                        <Route
-                                            element={
-                                                <Authenticated
-                                                    key="authenticated-inner"
-                                                    fallback={<CatchAllNavigate to="/login"/>}
-                                                >
-                                                    <ThemedLayoutV2
-                                                        Header={() => <Header sticky/>}
-                                                        Sider={ThemedSiderV2}
-                                                        Title={Title}
-                                                    >
-                                                        <Outlet/>
-                                                    </ThemedLayoutV2>
-                                                </Authenticated>
-                                            }
-                                        >
-                                            {/*:/application?uri=:uri*/}
-                                            <Route
-                                                index
-                                                element={<NavigateToResource resource="file:///tmp/getting-started"/>}
-                                            />
-                                            <Route path="/evanotebook">
-                                                <Route index element={<Evanotebook/>}/>
-                                            </Route>
-                                            <Route path="*" element={<ErrorComponent/>}/>
-                                        </Route>
-                                        <Route
-                                            element={
-                                                <Authenticated
-                                                    key="authenticated-outer"
-                                                    fallback={<Outlet/>}
-                                                >
-                                                    <NavigateToResource/>
-                                                </Authenticated>
-                                            }
-                                        >
-                                            <Route
-                                                path="/login"
-                                                element={
-                                                    <AuthPage
-                                                        type="login"
-                                                        title={
-                                                            <ThemedTitleV2
-                                                                collapsed={false}
-                                                                text={import.meta.env.VITE_APP_NAME}
-                                                                icon={<AppIcon/>}
-                                                            />
-                                                        }
-                                                        formProps={{
-                                                            defaultValues: {
-                                                                email: "",
-                                                                password: "",
-                                                            },
-                                                        }}
-                                                        providers={[
-                                                            {
-                                                                name: "google",
-                                                                label: "Sign in with Google",
-                                                                icon:
-                                                                    <Google
-                                                                        style={{
-                                                                            fontSize: 18,
-                                                                            lineHeight: 0,
-                                                                        }}
-                                                                    />
-                                                            },
-                                                            {
-                                                                name: "github",
-                                                                label: "Sign in with GitHub",
-                                                                icon:
-                                                                    <GitHub
-                                                                        style={{
-                                                                            fontSize: 18,
-                                                                            lineHeight: 0,
-                                                                        }}
-                                                                    />
-                                                            },
-                                                        ]}
-                                                    />
-                                                }
-                                            />
-                                            <Route
-                                                path="/register"
-                                                element={<AuthPage type="register"/>}
-                                            />
-                                            <Route
-                                                path="/forgot-password"
-                                                element={<AuthPage type="forgotPassword"/>}
-                                            />
-                                        </Route>
-                                    </Routes>
-                                    <RefineKbar/>
-                                    <UnsavedChangesNotifier/>
-                                    <DocumentTitleHandler/>
-                            </Refine>
+                            <ProvisionContextProvider>
+                                <ProvisionedRefine/>
+                            </ProvisionContextProvider>
                             <DevtoolsPanel/>
                         </DevtoolsProvider>
                     </RefineSnackbarProvider>

@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "default": "development"
+    },
+    "services": {
+      "type": "object",
+      "description": "https://docs.ansible.com/ansible/latest/inventory_guide/intro_patterns.html"
+    },
+    "vars": {
+      "type": "object"
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "language": {
+          "type": "string",
+          "default": "en"
+        },
+        "theme": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "default": "dark"
+            }
+          }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "description": "Makefile interpreter that uses hash dependencies instead of timestamps, with dependencies based on system events.",
+      "items": {}
+    }
+  }
+}
