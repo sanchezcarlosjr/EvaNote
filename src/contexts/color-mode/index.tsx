@@ -20,7 +20,7 @@ export const ColorModeContext = createContext<ColorModeContextType>(
 export const ColorModeContextProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
-  const playbook = useContext(ProvisionContext);
+  const {playbook} = useContext(ProvisionContext);
 
   const colorModeFromLocalStorage = localStorage.getItem("colorMode");
   const isSystemPreferenceDark = window?.matchMedia(

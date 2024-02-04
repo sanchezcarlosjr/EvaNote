@@ -13,13 +13,13 @@ export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
     const {data: identity} = useGetIdentity<any>();
     const url = useQuery();
-    const room = url.get("uri") ?? "file:///tmp/getting-started";
+    const uri = url.get("uri") ?? "browser:/tmp/getting-started.nb";
 
     const doc = new Doc();
-    new IndexeddbPersistence(room, doc);
+    new IndexeddbPersistence(uri, doc);
     const provider = new YPartyKitProvider(
         "blocknote-dev.yousefed.partykit.dev",
-        room,
+        uri,
         doc
     );
 

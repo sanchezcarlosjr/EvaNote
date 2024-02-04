@@ -33,7 +33,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import {Search} from "@mui/icons-material";
-import {useKBar} from "@refinedev/kbar";
+import {createAction, Priority, useKBar, useRegisterActions} from "@refinedev/kbar";
 import {useContextMenu} from "../context-menu/useContextMenu";
 import {ContextMenu} from "../context-menu/contextMenu";
 
@@ -299,7 +299,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
 
     const {query} = useKBar();
 
-    const search = (
+    const kbar = (
         <Tooltip
             title={t("buttons.search", "Search") + " Ctrl+K"}
             placement="right"
@@ -353,7 +353,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
         }
         return (
             <>
-                {search}
+                {kbar}
                 {dashboard}
                 {items}
             </>

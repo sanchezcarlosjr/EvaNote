@@ -21,12 +21,14 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     const uri = params.get('uri');
     const [path, setPath] = useState<string[]>([]);
     useEffect(() => {
-        if (!uri)
+        if (!uri) {
+            setPath([]);
             return;
+        }
         const url = new URL(uri);
         setPath([
             url.protocol.replace(":", ""),
-            ...url.pathname.substring(1).split('/').filter(x => x),
+            ...url.pathname.split('/').filter(x => x),
         ]);
     }, [uri]);
     return (
