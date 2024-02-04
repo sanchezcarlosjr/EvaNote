@@ -1,0 +1,6 @@
+[submodule "packages/BrowserFS"]
+	path = packages/BrowserFS
+	url = git@github.com:sanchezcarlosjr/BrowserFS.git
+[submodule "packages/browsefs-core"]
+	path = packages/browsefs-core
+	url = git@github.com:sanchezcarlosjr/browserfs-core.git
