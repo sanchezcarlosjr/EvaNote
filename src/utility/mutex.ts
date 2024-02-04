@@ -55,17 +55,6 @@ export class Mutex {
         });
     }
 
-    wait() {
-        return new Promise((r) => {
-            const subscription = this.actor.subscribe(state => {
-                if (state.value === "Available") {
-                    subscription.unsubscribe();
-                    r(null);
-                }
-            });
-        });
-    }
-
     async execute(functor: () => Promise<any>) {
         await this.acquire();
         await functor();
