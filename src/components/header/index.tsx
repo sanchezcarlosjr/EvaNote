@@ -3,9 +3,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import {Breadcrumb, HamburgerMenu, RefineThemedLayoutV2HeaderProps} from "@refinedev/mui";
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {HistoryOutlined, Comment, MoreHoriz} from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
+import {useQuery} from "../../utility/useQuery";
 
 type IUser = {
     id: number;
@@ -16,6 +17,18 @@ type IUser = {
 export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                                                                       sticky = true,
                                                                   }) => {
+    const params = useQuery();
+    const uri = params.get('uri');
+    const [path, setPath] = useState<string[]>([]);
+    useEffect(() => {
+        if (!uri)
+            return;
+        const url = new URL(uri);
+        setPath([
+            url.protocol.replace(":", ""),
+            ...url.pathname.substring(1).split('/').filter(x => x),
+        ]);
+    }, [uri]);
     return (
 
         <Toolbar variant="dense">
@@ -26,24 +39,11 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                          justifyContent="flex-start"
                          alignItems="center">
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Link underline="hover" color="inherit" href="#">
-                            root
-                        </Link>
-                        <Link
-                            underline="hover"
-                            color="inherit"
-                            href="#"
-                        >
-                            tmp
-                        </Link>
-                        <Link
-                            underline="hover"
-                            color="text.primary"
-                            href="#"
-                            aria-current="page"
-                        >
-                            getting-started
-                        </Link>
+                        {
+                            path.map((pathname) => <Link key={pathname} underline="hover" color="inherit" href="#">
+                                {pathname}
+                            </Link>)
+                        }
                     </Breadcrumbs>
                 </Stack>
                 <Stack

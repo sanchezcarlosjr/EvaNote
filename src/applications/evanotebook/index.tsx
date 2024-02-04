@@ -1,19 +1,12 @@
 import {IResourceComponentsProps, useGetIdentity} from "@refinedev/core";
 import {BlockNoteView, useBlockNote} from "@blocknote/react";
 import "@blocknote/react/style.css";
-import {useContext, useEffect, useMemo, useState} from "react";
+import {useContext} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
-import {useLocation} from "react-router-dom";
 import {Doc} from "yjs";
 import {IndexeddbPersistence} from 'y-indexeddb';
 import YPartyKitProvider from "y-partykit/provider";
-
-// TODO: move to some specific package
-function useQuery() {
-    const {search} = useLocation();
-
-    return useMemo(() => new URLSearchParams(search), [search]);
-}
+import {useQuery} from "../../utility/useQuery";
 
 
 export const Evanotebook: React.FC<IResourceComponentsProps> = () => {

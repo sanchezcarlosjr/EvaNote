@@ -3,40 +3,51 @@ import {Try} from "@mui/icons-material";
 import {ProvisionContext} from "../contexts/provision";
 import fs, {configure} from 'browserfs';
 import {Mutex} from "../utility/mutex";
+import {ResourceProps} from "@refinedev/core";
+import path from "bfs-path";
+import {capitalize} from "@mui/material";
 
 
 const mutex = new Mutex();
 
+
 export function useUniformResourceIdentifiers() {
     const playbook = useContext(ProvisionContext);
-
+    const [resources, setResources] = useState<ResourceProps[]>([]);
     useEffect(() => {
-        mutex.execute(() => {
-            console.log("A", 87);
-            return configure({
-                '/tmp': {
-                    'fs': 'InMemory'
+        mutex.execute(async() =>
+            {
+                await configure({
+                    '/tmp': 'InMemory',
+                    '/home': { fs: 'AsyncMirror', options: { sync: { fs: 'InMemory' }, async: { fs: 'IndexedDB' } } },
+                });
+                await fs.isReady;
+
+                for (const resource of fs.walkSync('/')) {
+                    const uri = `browser://${resource}`;
+                    setResources([
+                        {
+                            name: uri,
+                            meta: {
+                                label: capitalize(path.basename(resource, path.extname(resource))),
+                                icon: <Try/>
+                            },
+                            list: `/evanotebook?uri=${uri}`
+                        }
+                    ]);
                 }
-            });
-        }).then(_ => console.log("B", 89));
+
+            }
+        ).then();
         return () => {
             mutex.execute(() => {
-                console.log("A", 92);
-                return fs.umount('/tmp');
-            }).then(_ => console.log("B", 94));
+                fs.umount('/tmp');
+                return fs.umount('/home');
+            }).then();
         }
     }, []);
 
-    const [resources, setResources] = useState([
-        {
-            name: "file:///tmp/getting-started",
-            meta: {
-                label: "Getting started",
-                icon: <Try/>
-            },
-            list: "/evanotebook?uri=file:///tmp/getting-started"
-        }
-    ]);
+
 
 
     return resources;
