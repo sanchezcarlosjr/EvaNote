@@ -22,7 +22,7 @@
     "@refinedev/react-hook-form": "4.8.13",
     "@refinedev/react-router-v6": "4.5.5",
     "@refinedev/supabase": "5.7.5",
-    "@xstate/react": "^4.0.3",
+    "@xstate/react": "4.0.3",
     "browserfs": "2.0.0",
     "i18next": "20.6.1",
     "i18next-browser-languagedetector": "6.1.8",
@@ -33,7 +33,7 @@
     "react-i18next": "11.18.6",
     "react-router-dom": "6.21.3",
     "uniqolor": "1.1.1",
-    "xstate": "^5.6.0",
+    "xstate": "5.6.0",
     "y-indexeddb": "9.0.12",
     "y-partykit": "0.0.23",
     "y-webrtc": "10.3.0"
