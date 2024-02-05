@@ -78,6 +78,7 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
     }
 
     const [resources, setResources] = useState<ResourceProps[]>([]);
+
     useEffect(() => {
         mutex.execute(async () => {
             await configure({
@@ -85,6 +86,8 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
                 '/tmp': 'InMemory'
             });
             await fs.isReady;
+
+            fs.writeFileSync('/tmp/playbook.json', JSON.stringify(playbook, null, 2));
 
             reloadResources();
 
