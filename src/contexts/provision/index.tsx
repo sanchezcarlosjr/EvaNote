@@ -63,7 +63,7 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
         }, servicePreferenceOrder: ['text-editor']
     }]);
 
-    function loadResources() {
+    function reloadResources() {
         const newResources = [];
 
         newResources.push({
@@ -86,7 +86,7 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
             });
             await fs.isReady;
 
-            loadResources();
+            reloadResources();
 
             setFilesystem(fs);
 
@@ -94,23 +94,22 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
         return () => {
             mutex.execute(() => {
                 return fs.umount('/tmp');
-            });
+            }).then();
         }
     }, []);
 
 
     useRegisterActions([createAction({
-        name: "Write new resource", section: "Resources", perform: () => {
+        name: "Write new resource", section: "Action over Resources", perform: () => {
             const resource_pathname = window.prompt("Resource path");
             if (!resource_pathname) return;
             if (!fs.existsSync(resource_pathname)) {
                 fs.writeFileSync(resource_pathname, '');
             }
-            const resource =  uriAssociation.map(resource_pathname)
-            setResources(r => [...r, resource]);
+            reloadResources();
         }, priority: Priority.HIGH,
     }), createAction({
-        name: "Delete resource", section: "Resources", perform: () => {
+        name: "Delete resource", section: "Action over Resources", perform: () => {
             const resource_pathname = window.prompt("Resource path");
             if (!resource_pathname) return;
             if (!fs.existsSync(resource_pathname)) {
@@ -118,9 +117,16 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
                 return;
             }
             fs.unlinkSync(resource_pathname);
-            loadResources();
+            reloadResources();
         }, priority: Priority.HIGH,
-    })]);
+    }),
+        ...resources.map(resource => createAction({
+            name: resource.name, section: "Resources", perform: () => {
+                window.location.href = resource.list as string ?? "/";
+            }, priority: Priority.HIGH,
+        }))
+    ], [resources]);
+
 
     return (<ProvisionContext.Provider
             value={{

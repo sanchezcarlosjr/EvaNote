@@ -1,4 +1,12 @@
-import {Authenticated, GitHubBanner, Refine, useGetIdentity, useTranslate} from "@refinedev/core";
+import {
+    Authenticated,
+    GitHubBanner,
+    Refine,
+    ResourceProps,
+    useGetIdentity,
+    useNavigation,
+    useTranslate
+} from "@refinedev/core";
 import {DevtoolsPanel, DevtoolsProvider} from "@refinedev/devtools";
 import {Priority, RefineKbar, RefineKbarProvider} from "@refinedev/kbar";
 import {GitHub, Google, Try} from "@mui/icons-material";
@@ -36,13 +44,13 @@ import { createAction, useRegisterActions } from "@refinedev/kbar";
 import {MuiInferencer} from "@refinedev/inferencer/mui";
 import {TextEditor} from "./applications/text-editor";
 import {useContext} from "react";
+import fs from "browserfs";
 
 
 function ProvisionedRefine() {
     const {t, i18n} = useTranslation();
 
     const {resources} = useContext(ProvisionContext);
-
 
     const i18nProvider = {
         translate: (key: string, params: object) => t(key, params),
