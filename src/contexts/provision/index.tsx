@@ -1,10 +1,7 @@
-import { ThemeProvider } from "@mui/material/styles";
-import { RefineThemes } from "@refinedev/mui";
+import {ThemeProvider} from "@mui/material/styles";
+import {RefineThemes} from "@refinedev/mui";
 import React, {
-  createContext,
-  PropsWithChildren,
-  useEffect,
-  useState,
+    createContext, PropsWithChildren, useEffect, useState,
 } from "react";
 
 type ProvisionContextType = any;
@@ -13,7 +10,7 @@ import defaultPlaybook from '/playbook.json?raw';
 import {EditNote, Subject, TextSnippet, Try} from "@mui/icons-material";
 
 import fs, {configure} from 'browserfs';
-import {ResourceProps} from "@refinedev/core";
+import {ResourceProps, useNavigation, useNotification} from "@refinedev/core";
 import path from "bfs-path";
 import {capitalize} from "@mui/material";
 import {createAction, Priority, useRegisterActions} from "@refinedev/kbar";
@@ -21,57 +18,79 @@ import {Mutex} from "../../utility/mutex";
 
 
 const defaultPlaybookJson = render(defaultPlaybook, {});
-export const ProvisionContext = createContext<ProvisionContextType>({playbook: defaultPlaybookJson, resources: [], filesystem: null} as ProvisionContextType);
+export const ProvisionContext = createContext<ProvisionContextType>({
+    playbook: defaultPlaybookJson,
+    resources: [],
+    filesystem: null
+} as ProvisionContextType);
 const mutex = new Mutex();
 
+interface URI extends ResourceProps {
+    pattern: RegExp;
+    servicePreferenceOrder: string[];
+}
+
+class URIAssociation {
+    // @TODO: Increase perfomance with a better data structure.
+    constructor(private uris: URI[] = []) {
+    }
+
+    map(resource_pathname: string) {
+        const uri = this.uris.find(uri => resource_pathname.match(uri.pattern));
+        const name = `browser:${resource_pathname}`;
+        let application = uri?.servicePreferenceOrder[0] ?? "text-editor";
+        return {
+            name, meta: {
+                label: capitalize(path.basename(resource_pathname, path.extname(resource_pathname))),
+                icon: uri?.meta?.icon ?? <TextSnippet/>
+            }, list: `/${application}?uri=${name}`
+        }
+    }
+
+}
+
 export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}) => {
-  const [playbook, setPlaybook] = useState(defaultPlaybookJson);
-  const [filesystem, setFilesystem] = useState(null);
+    const [playbook, setPlaybook] = useState(defaultPlaybookJson);
+    const [filesystem, setFilesystem] = useState(null);
 
-  const [resources, setResources] = useState<ResourceProps[]>([]);
+    const uriAssociation = new URIAssociation([{
+        name: 'Notebook', pattern: /.+\.nb$/, meta: {
+            icon: <EditNote/>
+        }, servicePreferenceOrder: ['evanotebook']
+    }, {
+        name: 'Plain Text', pattern: /.+\.txt$/, meta: {
+            icon: <TextSnippet/>
+        }, servicePreferenceOrder: ['text-editor']
+    }]);
+
+    function loadResources() {
+        const newResources = [];
+
+        newResources.push({
+            name: "audit-logs", list: "/audit-logs", show: "/audit-logs/show/:id"
+        });
+
+        for (const resource_pathname of fs.walkSync('/')) {
+            newResources.push(uriAssociation.map(resource_pathname));
+        }
+
+        setResources(newResources);
+    }
+
+    const [resources, setResources] = useState<ResourceProps[]>([]);
     useEffect(() => {
-        mutex.execute(async() =>
-            {
-                await configure({
-                    '/': { fs: 'AsyncMirror', options: { sync: { fs: 'InMemory' }, async: { fs: 'IndexedDB' } } },
-                    '/tmp': 'InMemory',
-                });
-                await fs.isReady;
+        mutex.execute(async () => {
+            await configure({
+                '/': {fs: 'AsyncMirror', options: {sync: {fs: 'InMemory'}, async: {fs: 'IndexedDB'}}},
+                '/tmp': 'InMemory'
+            });
+            await fs.isReady;
 
-                const newResources = [];
+            loadResources();
 
-                newResources.push({
-                    name: "audit-logs",
-                    list: "/audit-logs",
-                    show: "/audit-logs/show/:id"
-                });
+            setFilesystem(fs);
 
-                for (const resource of fs.walkSync('/')) {
-                    const uri = `browser:${resource}`;
-                    let application = "text-editor";
-                    let icon = <TextSnippet />
-                    if (resource.match(/.+\.nb$/)) {
-                        application = "evanotebook";
-                        icon = <EditNote/>;
-                    }
-                    newResources.push(
-                        {
-                            name: uri,
-                            meta: {
-                                label: capitalize(path.basename(resource, path.extname(resource))),
-                                icon
-                            },
-                            list: `/${application}?uri=${uri}`
-                        }
-                    )
-                }
-
-                setResources(newResources);
-
-                setFilesystem(fs);
-
-            }
-        ).then();
+        }).then();
         return () => {
             mutex.execute(() => {
                 return fs.umount('/tmp');
@@ -81,42 +100,33 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
 
 
     useRegisterActions([createAction({
-        name: "Write new resource",
-        section: "Resources",
-        perform: () => {
-            const resource = window.prompt("Resource path");
-            if (!resource)
-                return;
-            if (!fs.existsSync(resource)) {
-                fs.writeFileSync(resource, '');
+        name: "Write new resource", section: "Resources", perform: () => {
+            const resource_pathname = window.prompt("Resource path");
+            if (!resource_pathname) return;
+            if (!fs.existsSync(resource_pathname)) {
+                fs.writeFileSync(resource_pathname, '');
             }
-            const uri = `browser:${resource}`;
-            setResources(r => [
-                ...r,
-                {
-                    name: uri,
-                    meta: {
-                        label: capitalize(path.basename(resource, path.extname(resource))),
-                        icon: <TextSnippet/>
-                    },
-                    list: `text-editor?uri=${uri}`
-                }
-            ]);
-        },
-        priority: Priority.HIGH,
+            const resource =  uriAssociation.map(resource_pathname)
+            setResources(r => [...r, resource]);
+        }, priority: Priority.HIGH,
+    }), createAction({
+        name: "Delete resource", section: "Resources", perform: () => {
+            const resource_pathname = window.prompt("Resource path");
+            if (!resource_pathname) return;
+            if (!fs.existsSync(resource_pathname)) {
+                alert(`The resource "${resource_pathname}" has not been found.`);
+                return;
+            }
+            fs.unlinkSync(resource_pathname);
+            loadResources();
+        }, priority: Priority.HIGH,
     })]);
 
-  return (
-    <ProvisionContext.Provider
-      value={
-      {
-        playbook,
-        resources,
-        filesystem
-      }
-      }
-    >
-      {children}
-    </ProvisionContext.Provider>
-  );
+    return (<ProvisionContext.Provider
+            value={{
+                playbook, resources, filesystem
+            }}
+        >
+            {children}
+        </ProvisionContext.Provider>);
 };

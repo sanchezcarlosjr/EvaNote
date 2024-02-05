@@ -1,12 +1,13 @@
 import {IResourceComponentsProps, useGetIdentity} from "@refinedev/core";
 import {BlockNoteView, useBlockNote} from "@blocknote/react";
 import "@blocknote/react/style.css";
-import {useContext} from "react";
+import React, {useContext} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
 import {Doc} from "yjs";
 import {IndexeddbPersistence} from 'y-indexeddb';
 import YPartyKitProvider from "y-partykit/provider";
 import {useQuery} from "../../utility/useQuery";
+import {CircularProgress} from "@mui/material";
 
 
 export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
@@ -36,7 +37,7 @@ export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
 
 
     if (!identity && !identity?.color)
-        return <>Loading</>;
+        return <CircularProgress />;
 
 
     editor.updateCollaborationUserInfo({

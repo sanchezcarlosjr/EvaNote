@@ -1,12 +1,13 @@
-import {IResourceComponentsProps, useGetIdentity} from "@refinedev/core";
+import {IResourceComponentsProps, useGetIdentity, useNavigation, useNotification} from "@refinedev/core";
 import "@blocknote/react/style.css";
-import {ChangeEvent, useContext, useEffect, useRef} from "react";
+import React, {ChangeEvent, useContext, useEffect, useRef, useState} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
 import {useQuery} from "../../utility/useQuery";
 
 import {TextareaAutosize as BaseTextareaAutosize} from '@mui/base/TextareaAutosize';
 import {styled} from '@mui/system';
 import {ProvisionContext} from "../../contexts/provision";
+import {CircularProgress} from "@mui/material";
 
 export default function UnstyledTextareaIntroduction() {
     return <TextareaAutosize aria-label="empty textarea" placeholder="Empty" />;
@@ -72,22 +73,31 @@ export const TextEditor: React.FC<IResourceComponentsProps> = () => {
     const url = useQuery();
     const uri = new URL(url.get("uri") ?? "browser:/tmp/getting-started.txt");
     const {filesystem: fs} = useContext(ProvisionContext);
-    const inputRef = useRef<HTMLTextAreaElement|null>(null);
+    const [value, setValue] = useState("");
+    const { push } = useNavigation();
+    const { open } = useNotification();
 
     useEffect(() => {
-        if (!fs || !inputRef?.current)
+        if (!fs)
             return;
-        inputRef.current.value = fs.readFileSync(uri.pathname, 'utf-8');
-    }, [fs, inputRef?.current, uri.pathname]);
-
-    function onChange(event: ChangeEvent<HTMLTextAreaElement>) {
-        if (!inputRef?.current)
+        if (!fs.existsSync(uri.pathname)) {
+            push('/not-found');
+            open?.({
+                type: "error",
+                message: `Protocol ${uri.protocol} has not found ${uri.pathname}.`,
+                description: "",
+                key: uri.pathname,
+            });
             return;
-        fs.writeFileSync(uri.pathname, inputRef.current.value);
-    }
+        }
+        setValue(fs.readFileSync(uri.pathname, 'utf-8'));
+    }, [fs, uri.pathname]);
 
     if (!identity && !identity?.color)
-        return <>Loading</>;
+        return <CircularProgress />;
 
-    return <TextareaAutosize  onChange={onChange} ref={inputRef}></TextareaAutosize>;
+    return <TextareaAutosize value={value} onChange={e => {
+        fs.writeFileSync(uri.pathname, e.target.value);
+        setValue(e.target.value);
+    }}></TextareaAutosize>;
 };
