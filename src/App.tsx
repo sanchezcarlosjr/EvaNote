@@ -104,8 +104,8 @@ function ProvisionedRefine() {
                         <Route index element={<TextEditor/>}/>
                     </Route>
                     <Route path="audit-logs">
-                        <Route index element={<MuiInferencer />} />
-                        <Route path="show/:id" element={<MuiInferencer />} />
+                        <Route index element={<MuiInferencer hideCodeViewerInProduction />} />
+                        <Route path="show/:id" element={<MuiInferencer hideCodeViewerInProduction />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent/>}/>
                 </Route>
