@@ -1,14 +1,14 @@
 import {IResourceComponentsProps, useGetIdentity} from "@refinedev/core";
 import {BlockNoteView, useBlockNote} from "@blocknote/react";
 import "@blocknote/react/style.css";
+import './styles.css';
 import React, {useContext} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
 import {Doc} from "yjs";
 import {IndexeddbPersistence} from 'y-indexeddb';
 import YPartyKitProvider from "y-partykit/provider";
 import {useQuery} from "../../utility/useQuery";
-import {CircularProgress} from "@mui/material";
-
+import {Button, CircularProgress, useMediaQuery} from "@mui/material";
 
 export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
@@ -16,34 +16,29 @@ export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
     const url = useQuery();
     const uri = url.get("uri") ?? "browser:/tmp/getting-started.nb";
 
+
+
+
     const doc = new Doc();
     new IndexeddbPersistence(uri, doc);
-    const provider = new YPartyKitProvider(
-        "blocknote-dev.yousefed.partykit.dev",
-        uri,
-        doc
-    );
+    const provider = new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", uri, doc);
 
     const editor = useBlockNote({
         collaboration: {
-            provider,
-            fragment: doc.getXmlFragment("document-store"),
-            user: {
-                name: identity?.email ?? "",
-                color: identity?.color ?? "",
+            provider, fragment: doc.getXmlFragment("document-store"), user: {
+                name: identity?.email ?? "", color: identity?.color ?? "",
             },
         }
     });
 
 
-    if (!identity && !identity?.color)
-        return <CircularProgress />;
+    if (!identity && !identity?.color) return <CircularProgress/>;
 
 
     editor.updateCollaborationUserInfo({
-        name: identity?.email ?? "",
-        color: identity?.color ?? "",
-    })
+        name: identity?.email ?? "", color: identity?.color ?? "",
+    });
+
 
     return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor}/>;
 };

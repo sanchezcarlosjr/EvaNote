@@ -1,0 +1,7 @@
+.bn-container[data-color-scheme=dark] {
+    /*
+       TODO: MUI CSS Theme Variables are experimental https://mui.com/material-ui/experimental-api/css-theme-variables/usage/
+       --bn-colors-editor-background: #121212; var(--mui-palette-primary-main);
+    */
+    --bn-colors-editor-background: #121212;
+}

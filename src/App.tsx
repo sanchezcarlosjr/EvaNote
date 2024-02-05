@@ -185,8 +185,8 @@ function App() {
         <BrowserRouter>
             <RefineKbarProvider options={{enableHistory: true}}>
                 <ColorModeContextProvider>
-                    <CssBaseline/>
-                    <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto"}}}/>
+                    <CssBaseline />
+                    <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto", '*': {fontFamily: `"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Open Sans", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif`}}}}/>
                     <RefineSnackbarProvider>
                         <DevtoolsProvider>
                             <ProvisionContextProvider>
