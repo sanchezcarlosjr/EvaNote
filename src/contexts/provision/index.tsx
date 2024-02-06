@@ -7,10 +7,11 @@ import React, {
 type ProvisionContextType = any;
 import {render} from "@evanote/template-engine";
 import defaultPlaybook from '/playbook.json?raw';
-import {EditNote, Subject, TextSnippet, Try} from "@mui/icons-material";
+import {EditNote, Subject, SvgIconComponent, TextSnippet, Try} from "@mui/icons-material";
+import * as MaterialIcons from "@mui/icons-material";
 
 import fs, {configure} from 'browserfs';
-import {ResourceProps, useNavigation, useNotification} from "@refinedev/core";
+import {ResourceProps, useGetIdentity, useNavigation, useNotification} from "@refinedev/core";
 import path from "bfs-path";
 import {capitalize} from "@mui/material";
 import {createAction, Priority, useRegisterActions} from "@refinedev/kbar";
@@ -53,15 +54,22 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
     const [playbook, setPlaybook] = useState(defaultPlaybookJson);
     const [filesystem, setFilesystem] = useState(null);
 
-    const uriAssociation = new URIAssociation([{
-        name: 'Notebook', pattern: /.+\.nb$/, meta: {
-            icon: <EditNote/>
-        }, servicePreferenceOrder: ['evanotebook']
-    }, {
-        name: 'Plain Text', pattern: /.+\.txt$/, meta: {
-            icon: <TextSnippet/>
-        }, servicePreferenceOrder: ['text-editor']
-    }]);
+    const uriAssociation = new URIAssociation(playbook.settings.uriAssociation.map((association: { meta: { icon: string | number; }; pattern: string | RegExp; }) => {
+            // @ts-ignore
+            //  Element implicitly has an 'any' type because expression of type 'string | number' can't be used to index type
+            const Icon: SvgIconComponent  = MaterialIcons[association.meta.icon as string] as SvgIconComponent;
+            return (
+                {
+                    ...association,
+                    pattern: new RegExp(association.pattern),
+                    meta: {
+                        ...association.meta,
+                        icon: <Icon />
+                    }
+                }
+            )
+        }
+    ));
 
     function reloadResources() {
         const newResources = [];

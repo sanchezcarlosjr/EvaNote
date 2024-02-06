@@ -192,6 +192,7 @@ const authProvider: AuthBindings = {
       const { data } = await supabaseClient.auth.getSession();
       const { session } = data;
 
+
       if (!session) {
         return {
           authenticated: false,
@@ -230,6 +231,7 @@ const authProvider: AuthBindings = {
   },
   getIdentity: async () => {
     const { data } = await supabaseClient.auth.getUser();
+    const { data: {session} } = await supabaseClient.auth.getSession();
 
     if (data?.user) {
       const color = uniqolor(data?.user?.email ?? "anonymous").color;
@@ -237,7 +239,8 @@ const authProvider: AuthBindings = {
       return {
         ...data.user,
         name: data.user.email,
-        color
+        color,
+        session
       };
     }
 

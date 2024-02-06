@@ -3,8 +3,27 @@
   "settings": {
      "language": "auto",
      "theme": {
-       "mode": "auto"
-     }
+       "mode": "auto",
+       "fontFamily": "MatterVF, \"Inter\", \"SF Pro Display\", -apple-system, BlinkMacSystemFont, \"Open Sans\", \"Segoe UI\", \"Roboto\", \"Oxygen\", \"Ubuntu\", \"Cantarell\", \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif !important"
+     },
+    "uriAssociation": [
+      {
+        "name": "Notebook",
+        "pattern": ".+\\.nb$",
+        "meta": {
+          "icon": "EditNote"
+        },
+        "servicePreferenceOrder": ["evanotebook"]
+      },
+      {
+        "name": "Plain Text",
+        "pattern": ".+\\.txt$",
+        "meta": {
+          "icon": "TextSnippet"
+        },
+        "servicePreferenceOrder": ["text-editor"]
+      }
+    ]
   },
   "dependencies": {
     "uri": ""
