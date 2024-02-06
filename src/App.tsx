@@ -1,32 +1,16 @@
-import {
-    Authenticated,
-    GitHubBanner,
-    Refine,
-    ResourceProps,
-    useGetIdentity,
-    useNavigation,
-    useTranslate
-} from "@refinedev/core";
+import {Authenticated, Refine} from "@refinedev/core";
 import {DevtoolsPanel, DevtoolsProvider} from "@refinedev/devtools";
-import {Priority, RefineKbar, RefineKbarProvider} from "@refinedev/kbar";
-import {GitHub, Google, Try} from "@mui/icons-material";
+import {RefineKbar, RefineKbarProvider} from "@refinedev/kbar";
+import {GitHub, Google} from "@mui/icons-material";
 
 import {
-    AuthPage,
-    ErrorComponent,
-    notificationProvider,
-    RefineSnackbarProvider, ThemedHeaderV2,
-    ThemedLayoutV2,
-    ThemedTitleV2,
+    AuthPage, ErrorComponent, notificationProvider, RefineSnackbarProvider, ThemedLayoutV2, ThemedTitleV2,
 } from "@refinedev/mui";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import routerBindings, {
-    CatchAllNavigate,
-    DocumentTitleHandler,
-    NavigateToResource,
-    UnsavedChangesNotifier,
+    CatchAllNavigate, DocumentTitleHandler, NavigateToResource, UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 import {dataProvider, liveProvider} from "@refinedev/supabase";
 import {useTranslation} from "react-i18next";
@@ -36,16 +20,14 @@ import {AppIcon} from "./components/app-icon";
 import {Header} from "./components";
 import {ColorModeContextProvider} from "./contexts/color-mode";
 import {supabaseClient} from "./utility";
-import {Evanotebook} from "./applications/evanotebook";
 import {ThemedSiderV2} from "./components/layout/sider";
 import {Title} from "./components/title";
 import {ProvisionContext, ProvisionContextProvider} from "./contexts/provision";
-import { createAction, useRegisterActions } from "@refinedev/kbar";
 import {MuiInferencer} from "@refinedev/inferencer/mui";
-import {TextEditor} from "./applications/text-editor";
-import {useContext} from "react";
-import fs from "browserfs";
+import React, {useContext} from "react";
 
+const Evanotebook = React.lazy(() => import("./applications/evanotebook"));
+const TextEditor = React.lazy(() => import("./applications/text-editor"));
 
 function ProvisionedRefine() {
     const {t, i18n} = useTranslation();
@@ -58,147 +40,128 @@ function ProvisionedRefine() {
         getLocale: () => i18n.language,
     };
 
-    return (
-        <Refine
-            dataProvider={dataProvider(supabaseClient)}
-            liveProvider={liveProvider(supabaseClient)}
-            authProvider={authProvider}
-            routerProvider={routerBindings}
-            notificationProvider={notificationProvider}
-            i18nProvider={i18nProvider}
-            resources={[...resources]}
-            options={{
-                syncWithLocation: true,
-                warnWhenUnsavedChanges: true,
-                useNewQueryKeys: true,
-                projectId: "pjfDKi-64ao4Z-zGOW6b",
-            }}
-        >
-            <Routes>
-                <Route
-                    element={
-                        <Authenticated
-                            key="authenticated-inner"
-                            fallback={<CatchAllNavigate to="/login"/>}
-                        >
-                            <ThemedLayoutV2
-                                Header={() => <Header sticky/>}
-                                Sider={ThemedSiderV2}
-                                Title={Title}
-                            >
-                                <Outlet/>
-                            </ThemedLayoutV2>
-                            <RefineKbar/>
-                        </Authenticated>
-                    }
+    return (<Refine
+        dataProvider={dataProvider(supabaseClient)}
+        liveProvider={liveProvider(supabaseClient)}
+        authProvider={authProvider}
+        routerProvider={routerBindings}
+        notificationProvider={notificationProvider}
+        i18nProvider={i18nProvider}
+        resources={[...resources]}
+        options={{
+            syncWithLocation: true,
+            warnWhenUnsavedChanges: true,
+            useNewQueryKeys: true,
+            disableTelemetry: true,
+            projectId: "pjfDKi-64ao4Z-zGOW6b",
+        }}
+    >
+        <Routes>
+            <Route
+                element={<Authenticated
+                    key="authenticated-inner"
+                    fallback={<CatchAllNavigate to="/login"/>}
                 >
-                    {/*:/uri?application=name*/}
-                    <Route
-                        index
-                        element={<NavigateToResource resource="browser://evanotebook"/>}
-                    />
-                    <Route path="evanotebook">
-                        <Route index element={<Evanotebook/>}/>
-                    </Route>
-                    <Route path="text-editor">
-                        <Route index element={<TextEditor/>}/>
-                    </Route>
-                    <Route path="audit-logs">
-                        <Route index element={<MuiInferencer hideCodeViewerInProduction />} />
-                        <Route path="show/:id" element={<MuiInferencer hideCodeViewerInProduction />} />
-                    </Route>
-                    <Route path="*" element={<ErrorComponent/>}/>
+                    <ThemedLayoutV2
+                        Header={() => <Header sticky/>}
+                        Sider={ThemedSiderV2}
+                        Title={Title}
+                    >
+                        <Outlet/>
+                    </ThemedLayoutV2>
+                    <RefineKbar/>
+                </Authenticated>}
+            >
+                <Route
+                    index
+                    element={<NavigateToResource resource="browser://evanotebook"/>}
+                />
+                <Route path="evanotebook">
+                    <Route index element={<Evanotebook/>}/>
                 </Route>
-                <Route
-                    element={
-                        <Authenticated
-                            key="authenticated-outer"
-                            fallback={<Outlet/>}
-                        >
-                            <NavigateToResource/>
-                        </Authenticated>
-                    }
+                <Route path="text-editor">
+                    <Route index element={<TextEditor/>}/>
+                </Route>
+                <Route path="audit-logs">
+                    <Route index element={<MuiInferencer hideCodeViewerInProduction/>}/>
+                    <Route path="show/:id" element={<MuiInferencer hideCodeViewerInProduction/>}/>
+                </Route>
+                <Route path="*" element={<ErrorComponent/>}/>
+            </Route>
+            <Route
+                element={<Authenticated
+                    key="authenticated-outer"
+                    fallback={<Outlet/>}
                 >
-                    <Route
-                        path="/login"
-                        element={
-                            <AuthPage
-                                type="login"
-                                title={
-                                    <ThemedTitleV2
-                                        collapsed={false}
-                                        text={import.meta.env.VITE_APP_NAME}
-                                        icon={<AppIcon/>}
-                                    />
-                                }
-                                formProps={{
-                                    defaultValues: {
-                                        email: "",
-                                        password: "",
-                                    },
+                    <NavigateToResource/>
+                </Authenticated>}
+            >
+                <Route
+                    path="/login"
+                    element={<AuthPage
+                        type="login"
+                        title={<ThemedTitleV2
+                            collapsed={false}
+                            text={import.meta.env.VITE_APP_NAME}
+                            icon={<AppIcon/>}
+                        />}
+                        formProps={{
+                            defaultValues: {
+                                email: "", password: "",
+                            },
+                        }}
+                        providers={[{
+                            name: "google", label: "Sign in with Google", icon: <Google
+                                style={{
+                                    fontSize: 18, lineHeight: 0,
                                 }}
-                                providers={[
-                                    {
-                                        name: "google",
-                                        label: "Sign in with Google",
-                                        icon:
-                                            <Google
-                                                style={{
-                                                    fontSize: 18,
-                                                    lineHeight: 0,
-                                                }}
-                                            />
-                                    },
-                                    {
-                                        name: "github",
-                                        label: "Sign in with GitHub",
-                                        icon:
-                                            <GitHub
-                                                style={{
-                                                    fontSize: 18,
-                                                    lineHeight: 0,
-                                                }}
-                                            />
-                                    },
-                                ]}
                             />
-                        }
-                    />
-                    <Route
-                        path="/register"
-                        element={<AuthPage type="register"/>}
-                    />
-                    <Route
-                        path="/forgot-password"
-                        element={<AuthPage type="forgotPassword"/>}
-                    />
-                </Route>
-            </Routes>
-            <UnsavedChangesNotifier/>
-            <DocumentTitleHandler/>
-        </Refine>
-    );
+                        }, {
+                            name: "github", label: "Sign in with GitHub", icon: <GitHub
+                                style={{
+                                    fontSize: 18, lineHeight: 0,
+                                }}
+                            />
+                        },]}
+                    />}
+                />
+                <Route
+                    path="/register"
+                    element={<AuthPage type="register"/>}
+                />
+                <Route
+                    path="/forgot-password"
+                    element={<AuthPage type="forgotPassword"/>}
+                />
+            </Route>
+        </Routes>
+        <UnsavedChangesNotifier/>
+        <DocumentTitleHandler/>
+    </Refine>);
 }
 
 function App() {
-    return (
-        <BrowserRouter>
-            <RefineKbarProvider options={{enableHistory: true}}>
-                <ColorModeContextProvider>
-                    <CssBaseline />
-                    <GlobalStyles styles={{html: {WebkitFontSmoothing: "auto", '*': {fontFamily: `"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Open Sans", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif`}}}}/>
-                    <RefineSnackbarProvider>
-                        <DevtoolsProvider>
-                            <ProvisionContextProvider>
-                                <ProvisionedRefine/>
-                            </ProvisionContextProvider>
-                            <DevtoolsPanel/>
-                        </DevtoolsProvider>
-                    </RefineSnackbarProvider>
-                </ColorModeContextProvider>
-            </RefineKbarProvider>
-        </BrowserRouter>
-    );
+    return (<BrowserRouter>
+        <RefineKbarProvider options={{enableHistory: true}}>
+            <ColorModeContextProvider>
+                <CssBaseline/>
+                <GlobalStyles styles={{
+                    html: {
+                        WebkitFontSmoothing: "auto",
+                        '*': {fontFamily: `"Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Open Sans", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif`}
+                    }
+                }}/>
+                <RefineSnackbarProvider>
+                    <DevtoolsProvider>
+                        <ProvisionContextProvider>
+                            <ProvisionedRefine/>
+                        </ProvisionContextProvider>
+                        <DevtoolsPanel/>
+                    </DevtoolsProvider>
+                </RefineSnackbarProvider>
+            </ColorModeContextProvider>
+        </RefineKbarProvider>
+    </BrowserRouter>);
 }
 
 export default App;

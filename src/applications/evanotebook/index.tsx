@@ -10,7 +10,7 @@ import YPartyKitProvider from "y-partykit/provider";
 import {useQuery} from "../../utility/useQuery";
 import {Button, CircularProgress, useMediaQuery} from "@mui/material";
 
-export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
+const Application: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
     const {data: identity} = useGetIdentity<any>();
     const url = useQuery();
@@ -42,3 +42,5 @@ export const Evanotebook: React.FC<IResourceComponentsProps> = () => {
 
     return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor}/>;
 };
+
+export default Application;

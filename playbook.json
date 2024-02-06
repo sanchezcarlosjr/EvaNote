@@ -1,29 +1,13 @@
 {
   "name": "Default playbook",
-  "services": [
-    {
-      "uri": "",
-      "label": "Supabase",
-      "headers": {
-        "Authorization": "{{'Bearer '+.token}}"
-      }
-    }
-  ],
   "settings": {
      "language": "auto",
      "theme": {
        "mode": "auto"
      }
   },
-  "tasks": [
-    {
-      "name": "Import playbook",
-      "depends_on": ["after_authentication"],
-      "command": "import playbook https://api.temp.com"
-    },
-    {
-      "name": "Import playbook",
-      "command": "insert script https://api.temp.com"
-    }
-  ]
+  "dependencies": {
+    "uri": ""
+  },
+  "tasks": []
 }
