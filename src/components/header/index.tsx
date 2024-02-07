@@ -39,7 +39,9 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                 <Stack   direction="row"
                          width="100%"
                          justifyContent="flex-start"
-                         alignItems="center">
+                         alignItems="center"
+                         id="header-flex-start"
+                >
                     <Breadcrumbs aria-label="breadcrumb">
                         {
                             path.map((pathname) => <Link key={pathname} underline="hover" color="inherit" href="#">
@@ -53,6 +55,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                     width="100%"
                     justifyContent="flex-end"
                     alignItems="center"
+                    id="header-flex-end"
                 >
                     <MenuItem aria-label="share-resource" disabled>Share</MenuItem>
                     <IconButton aria-label="resource-history" disabled color="primary" size="small">

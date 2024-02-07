@@ -1,5 +1,10 @@
 {
   "name": "Default playbook",
+  "description": "",
+  "version": "",
+  "keywords": "",
+  "license": "",
+  "author": "",
   "settings": {
      "language": "auto",
      "theme": {
@@ -25,8 +30,14 @@
       }
     ]
   },
-  "dependencies": {
-    "uri": ""
-  },
+  "dependencies": [
+    {
+      "uri": "supabase+s3:/dependencies/hello-world.mjs",
+      "integrity": "SHA-512:2de1b8afbde8e4df30db64273a1989d754a1614ed8607041317a3421e248164978aa22cc7cbada12da570bfbe88dbbf823a6072f3c20a4a5ae2670e2b23ccec0",
+      "headers": {},
+      "environment": "browser",
+      "triggers": ["authentication"]
+    }
+  ],
   "tasks": []
 }
