@@ -14,6 +14,22 @@
     "uriAssociation": [
       {
         "name": "Notebook",
+        "pattern": ".+\\.todo\\.nb$",
+        "meta": {
+          "icon": "Try"
+        },
+        "servicePreferenceOrder": ["evanotebook"]
+      },
+      {
+        "name": "Notebook",
+        "pattern": ".+\\.done\\.nb$",
+        "meta": {
+          "icon": "Done"
+        },
+        "servicePreferenceOrder": ["evanotebook"]
+      },
+      {
+        "name": "Notebook",
         "pattern": ".+\\.nb$",
         "meta": {
           "icon": "EditNote"
@@ -32,8 +48,8 @@
   },
   "dependencies": [
     {
-      "uri": "supabase+s3:/dependencies/hello-world.mjs",
-      "integrity": "SHA-512:2de1b8afbde8e4df30db64273a1989d754a1614ed8607041317a3421e248164978aa22cc7cbada12da570bfbe88dbbf823a6072f3c20a4a5ae2670e2b23ccec0",
+      "uri": "supabase+s3:/dependencies/evatutor/gradio-float-chatbot.js",
+      "integrity": "SHA-512:068ef0a10b5c1eaf0300075eadce1951dd9fb15eba01efd8da8e8c9405ed30a1ea22151aebb7fe6dd6d375b2ed399b6863bb0efb7106d3dcda15b35499efbc46",
       "headers": {},
       "environment": "browser",
       "triggers": ["authentication"]
