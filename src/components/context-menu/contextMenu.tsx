@@ -10,7 +10,7 @@ import {
     DifferenceOutlined,
     DriveFileMoveOutlined,
     DriveFileRenameOutlineOutlined,
-    EnhancedEncryptionOutlined,
+    EnhancedEncryptionOutlined, FileDownload,
     FileOpenOutlined,
     FolderCopyOutlined,
     HistoryOutlined,
@@ -149,6 +149,14 @@ export function ContextMenu({contextMenu, close}: {
                     <ShareOutlined fontSize="small"/>
                 </ListItemIcon>
                 <ListItemText>Share</ListItemText>
+                <Typography variant="body2" color="text.secondary">
+                </Typography>
+            </MenuItem>
+            <MenuItem onClick={close}>
+                <ListItemIcon>
+                    <FileDownload fontSize="small"/>
+                </ListItemIcon>
+                <ListItemText>Export</ListItemText>
                 <Typography variant="body2" color="text.secondary">
                 </Typography>
             </MenuItem>

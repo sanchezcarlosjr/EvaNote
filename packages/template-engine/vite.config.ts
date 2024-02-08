@@ -10,7 +10,7 @@ const packageName = packageJson.name.split('/').pop() || packageJson.name
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(__dirname, 'src/Indexer.ts'),
       formats: ['es', 'cjs', 'umd', 'iife'],
       name: camelCase(packageName, { pascalCase: true }),
       fileName: packageName,

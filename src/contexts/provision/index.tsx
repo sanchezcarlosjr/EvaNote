@@ -7,7 +7,7 @@ import React, {
 type ProvisionContextType = any;
 import {render} from "@evanote/template-engine";
 import defaultPlaybook from '/playbook.json?raw';
-import {EditNote, Subject, SvgIconComponent, TextSnippet, Try} from "@mui/icons-material";
+import {EditNote, InsertChart, Subject, SvgIconComponent, TextSnippet, Try} from "@mui/icons-material";
 import * as MaterialIcons from "@mui/icons-material";
 
 import fs, {configure} from 'browserfs';
@@ -56,7 +56,7 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
 
     const uriAssociation = new URIAssociation(playbook.settings.uriAssociation.map((association: { meta: { icon: string | number; }; pattern: string | RegExp; }) => {
             // @ts-ignore
-            //  Element implicitly has an 'any' type because expression of type 'string | number' can't be used to index type
+            //  Element implicitly has an 'any' type because expression of type 'string | number' can't be used to Indexer type
             const Icon: SvgIconComponent  = MaterialIcons[association.meta.icon as string] as SvgIconComponent;
             return (
                 {
@@ -78,6 +78,14 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
             name: "audit-logs", list: "/audit-logs", show: "/audit-logs/show/:id"
         });
 
+        newResources.push({
+            name: "user-progress",
+            list: "/user-progress",
+            meta: {
+                icon: <InsertChart />
+            }
+        });
+
         for (const resource_pathname of fs.walkSync('/')) {
             newResources.push(uriAssociation.map(resource_pathname));
         }
@@ -96,6 +104,20 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
             await fs.isReady;
 
             fs.writeFileSync('/tmp/playbook.json', JSON.stringify(playbook, null, 2));
+
+            fs.writeFileSync('/tmp/exercise-1.todo.nb', "");
+
+            fs.writeFileSync('/tmp/exercise-2.todo.nb', "");
+
+            fs.writeFileSync('/tmp/exercise-3.todo.nb', "");
+
+            fs.writeFileSync('/tmp/exercise-4.todo.nb', "");
+
+            fs.writeFileSync('/tmp/exercise-5.done.nb', "");
+
+            fs.writeFileSync('/tmp/exercise-6.done.nb', "");
+
+            fs.writeFileSync('/tmp/exercise-7.done.nb', "");
 
             reloadResources();
 
@@ -123,11 +145,11 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
         name: "Delete resource", section: "Action over Resources", perform: () => {
             const resource_pathname = window.prompt("Resource path");
             if (!resource_pathname) return;
-            if (!fs.existsSync(resource_pathname)) {
-                alert(`The resource "${resource_pathname}" has not been found.`);
-                return;
-            }
-            fs.unlinkSync(resource_pathname);
+            resources
+                .filter(resource => resource.name.match(new RegExp(resource_pathname)))
+                .map(resource => new URL(resource.name).pathname)
+                .filter(pathname => fs.existsSync(pathname))
+                .forEach(pathname => fs.unlinkSync(pathname));
             reloadResources();
         }, priority: Priority.HIGH,
     }),

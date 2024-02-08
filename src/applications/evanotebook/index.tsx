@@ -16,9 +16,6 @@ const Application: React.FC<IResourceComponentsProps> = () => {
     const url = useQuery();
     const uri = url.get("uri") ?? "browser:/tmp/getting-started.nb";
 
-
-
-
     const doc = new Doc();
     new IndexeddbPersistence(uri, doc);
     const provider = new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", uri, doc);

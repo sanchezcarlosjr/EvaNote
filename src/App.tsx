@@ -37,6 +37,8 @@ import {PlaybookExecutor} from "./PlaybookExecutor";
 
 const Evanotebook = React.lazy(() => import("./applications/evanotebook"));
 const TextEditor = React.lazy(() => import("./applications/text-editor"));
+const Indexer = React.lazy(() => import("./applications/indexer"));
+const UserProgress = React.lazy(() => import("./applications/user-progress"));
 
 function ProvisionedRefine() {
     const {t, i18n} = useTranslation();
@@ -95,13 +97,16 @@ function ProvisionedRefine() {
                         >
                             <Route
                                 index
-                                element={<h1>Welcome!</h1>}
+                                element={<Indexer />}
                             />
                             <Route path="evanotebook">
                                 <Route index element={<Evanotebook/>}/>
                             </Route>
                             <Route path="text-editor">
                                 <Route index element={<TextEditor/>}/>
+                            </Route>
+                            <Route path="user-progress">
+                                <Route index element={<UserProgress/>}/>
                             </Route>
                             <Route path="audit-logs">
                                 <Route index element={<MuiInferencer hideCodeViewerInProduction/>}/>

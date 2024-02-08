@@ -197,7 +197,7 @@ function defineShorthandFunction(name, params, body) {
 // Recursive-descent parser for JQ query language
 
 // Split input program into tokens. Tokens are:
-// quote, number, identifier-index, dot-square, dot, left-square,
+// quote, number, identifier-Indexer, dot-square, dot, left-square,
 // right-square, left-paren, right-paren, pipe, comma,
 // identifier, colon, left-brace, right-brace, semicolon, at,
 // variable, as, reduce, foreach, def, import, include, question
@@ -273,7 +273,7 @@ function tokenise(str, startAt=0, parenDepth) {
                 let tok = ''
                 while (isAlpha(str[i]) || isDigit(str[i]))
                     tok += str[i++]
-                ret.push({type: 'identifier-index', value: tok, location})
+                ret.push({type: 'identifier-Indexer', value: tok, location})
                 i--
             } else if (d == '[') {
                 i++
@@ -390,7 +390,7 @@ function parse(tokens, startAt=0, until='none') {
     let commaAccum = []
     while (t && (until.indexOf(t.type) == -1)) {
         // Simple cases
-        if (t.type == 'identifier-index') {
+        if (t.type == 'identifier-Indexer') {
             ret.push(new IdentifierIndex(t.value))
         } else if (t.type == 'number') {
             ret.push(new NumberNode(t.value))
@@ -836,8 +836,8 @@ function nameType(o) {
 //   FilterNode, generic juxtaposition combination
 //   IndexNode, lhs[rhs]
 //   SliceNode, lhs[from:to]
-//   GenericIndex, .[index]
-//   IdentifierIndex .index (delegates to GenericIndex("index"))
+//   GenericIndex, .[Indexer]
+//   IdentifierIndex .Indexer (delegates to GenericIndex("Indexer"))
 //   GenericSlice, .[from:to]
 //   IdentityNode, .
 //   ValueNode, parent of string/number/boolean
@@ -925,10 +925,10 @@ class IndexNode extends ParseNode {
             let t = nameType(l)
             for (let i of this.index.apply(input, conf)) {
                 if (t == 'array' && nameType(i) != 'number')
-                    throw 'Cannot index array with ' + nameType(i) + ' ' +
+                    throw 'Cannot Indexer array with ' + nameType(i) + ' ' +
                     JSON.stringify(i)
                 else if (t == 'object' && nameType(i) != 'string')
-                    throw 'Cannot index object with ' + nameType(i) + ' ' +
+                    throw 'Cannot Indexer object with ' + nameType(i) + ' ' +
                     JSON.stringify(i)
                 if (typeof i == 'number' && i < 0 && nameType(l) == 'array')
                     yield l[l.length + i]
@@ -982,10 +982,10 @@ class GenericIndex extends ParseNode {
         let t = nameType(input)
         for (let i of this.index.apply(input, conf)) {
             if (t == 'array' && nameType(i) != 'number')
-                throw 'Cannot index array with ' + nameType(i) + ' ' +
+                throw 'Cannot Indexer array with ' + nameType(i) + ' ' +
                 JSON.stringify(i)
             else if (t == 'object' && nameType(i) != 'string')
-                throw 'Cannot index object with ' + nameType(i) + ' ' +
+                throw 'Cannot Indexer object with ' + nameType(i) + ' ' +
                 JSON.stringify(i)
             if (typeof i == 'number' && i < 0 && nameType(input) == 'array')
                 yield input[input.length + i]

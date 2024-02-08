@@ -8,8 +8,9 @@ import {TextareaAutosize as BaseTextareaAutosize} from '@mui/base/TextareaAutosi
 import {styled} from '@mui/system';
 import {ProvisionContext} from "../../contexts/provision";
 import {CircularProgress} from "@mui/material";
+import Application from "../indexer";
 
-export default function UnstyledTextareaIntroduction() {
+function UnstyledTextareaIntroduction() {
     return <TextareaAutosize aria-label="empty textarea" placeholder="Empty" />;
 }
 
@@ -77,6 +78,7 @@ export const TextEditor: React.FC<IResourceComponentsProps> = () => {
     const { push } = useNavigation();
     const { open } = useNotification();
 
+
     useEffect(() => {
         if (!fs)
             return;
@@ -101,3 +103,5 @@ export const TextEditor: React.FC<IResourceComponentsProps> = () => {
         setValue(e.target.value);
     }}></TextareaAutosize>;
 };
+
+export default TextEditor;

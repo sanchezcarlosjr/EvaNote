@@ -11,6 +11,11 @@
        "mode": "auto",
        "fontFamily": "MatterVF, \"Inter\", \"SF Pro Display\", -apple-system, BlinkMacSystemFont, \"Open Sans\", \"Segoe UI\", \"Roboto\", \"Oxygen\", \"Ubuntu\", \"Cantarell\", \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif !important"
      },
+    "applications": {
+      "indexer": {
+        "redirect_policy": "always /user-progress"
+      }
+    },
     "uriAssociation": [
       {
         "name": "Notebook",
@@ -49,7 +54,7 @@
   "dependencies": [
     {
       "uri": "supabase+s3:/dependencies/evatutor/gradio-float-chatbot.js",
-      "integrity": "SHA-512:068ef0a10b5c1eaf0300075eadce1951dd9fb15eba01efd8da8e8c9405ed30a1ea22151aebb7fe6dd6d375b2ed399b6863bb0efb7106d3dcda15b35499efbc46",
+      "integrity": "SHA-512:bcf31e6f74ef7f4607e22ce2c2a663f39060c515d4fb47c1770fe70c319ad2771d0e6bfd39946d9343b4b78e747fd5a19de56b59eff7ac98b2463b425df1549e",
       "headers": {},
       "environment": "browser",
       "triggers": ["authentication"]
