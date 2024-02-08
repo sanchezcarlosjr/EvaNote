@@ -27,12 +27,14 @@
     "i18next": "20.6.1",
     "i18next-browser-languagedetector": "6.1.8",
     "i18next-xhr-backend": "3.2.2",
+    "katex": "^0.16.9",
     "mermaid": "10.8.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "7.50.0",
     "react-i18next": "11.18.6",
     "react-router-dom": "6.21.3",
+    "tiptap-math-extension": "1.1.0",
     "ts-pattern": "5.0.6",
     "uniqolor": "1.1.1",
     "xstate": "5.6.0",
@@ -80,6 +82,7 @@
   },
   "workspaces": [
     "packages/template-engine",
-    "packages/BrowserFS"
+    "packages/BrowserFS",
+    "packages/tiptap-math-extension/packages/tiptap-math-extension"
   ]
 }

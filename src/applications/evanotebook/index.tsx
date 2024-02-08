@@ -9,7 +9,8 @@ import {IndexeddbPersistence} from 'y-indexeddb';
 import YPartyKitProvider from "y-partykit/provider";
 import {useQuery} from "../../utility/useQuery";
 import {Button, CircularProgress, useMediaQuery} from "@mui/material";
-
+import { MathExtension } from "tiptap-math-extension";
+import "katex/dist/katex.min.css";
 const Application: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
     const {data: identity} = useGetIdentity<any>();
@@ -25,9 +26,11 @@ const Application: React.FC<IResourceComponentsProps> = () => {
             provider, fragment: doc.getXmlFragment("document-store"), user: {
                 name: identity?.email ?? "", color: identity?.color ?? "",
             },
+        },
+        _tiptapOptions: {
+            extensions: [MathExtension]
         }
     });
-
 
     if (!identity && !identity?.color) return <CircularProgress/>;
 

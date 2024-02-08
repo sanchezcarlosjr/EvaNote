@@ -57,7 +57,7 @@ function ProvisionedRefine() {
         <GlobalStyles styles={{
             html: {
                 WebkitFontSmoothing: "auto",
-                '*': {fontFamily: playbook.settings.theme.fontFamily}
+                '* :not(.katex-html span)': {fontFamily: playbook.settings.theme.fontFamily}
             }
         }}/>
         <RefineSnackbarProvider>

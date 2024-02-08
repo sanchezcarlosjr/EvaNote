@@ -4,3 +4,9 @@
 [submodule "packages/browsefs-core"]
 	path = packages/browsefs-core
 	url = git@github.com:sanchezcarlosjr/browserfs-core.git
+[submodule "packages/BlockNote"]
+	path = packages/BlockNote
+	url = git@github.com:sanchezcarlosjr/BlockNote.git
+[submodule "packages/tiptap-math-extension"]
+	path = packages/tiptap-math-extension
+	url = git@github.com:sanchezcarlosjr/tiptap-math-extension.git
