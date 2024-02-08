@@ -82,6 +82,7 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
             name: "user-progress",
             list: "/user-progress",
             meta: {
+                label: "User progress",
                 icon: <InsertChart />
             }
         });
