@@ -106,20 +106,6 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
 
             fs.writeFileSync('/tmp/playbook.json', JSON.stringify(playbook, null, 2));
 
-            fs.writeFileSync('/tmp/exercise-1.todo.nb', "");
-
-            fs.writeFileSync('/tmp/exercise-2.todo.nb', "");
-
-            fs.writeFileSync('/tmp/exercise-3.todo.nb', "");
-
-            fs.writeFileSync('/tmp/exercise-4.todo.nb', "");
-
-            fs.writeFileSync('/tmp/exercise-5.done.nb', "");
-
-            fs.writeFileSync('/tmp/exercise-6.done.nb', "");
-
-            fs.writeFileSync('/tmp/exercise-7.done.nb', "");
-
             reloadResources();
 
             setFilesystem(fs);

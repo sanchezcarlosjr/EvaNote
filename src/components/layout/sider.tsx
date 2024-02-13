@@ -388,7 +388,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
                 component="nav"
                 sx={{
                     position: "fixed",
-                    zIndex: 1101,
+                    zIndex: 2,
                     width: {sm: drawerWidth()},
                     display: "flex",
                 }}
@@ -429,11 +429,15 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
                 </Drawer>
                 <Drawer
                     variant="permanent"
+                    anchor="left"
                     sx={{
                         display: {xs: "none", md: "block"},
+                        width: drawerWidth,
+                        flexShrink: 0,
                         "& .MuiDrawer-paper": {
                             width: drawerWidth(),
                             overflow: "hidden",
+                            zIndex: 0,
                             transition: "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
                         },
                     }}

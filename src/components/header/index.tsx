@@ -7,6 +7,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {HistoryOutlined, Comment, MoreHoriz} from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
 import {useQuery} from "../../utility/useQuery";
+import {useNotification} from "@refinedev/core";
 
 type IUser = {
     id: number;
@@ -20,6 +21,8 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
     const params = useQuery();
     const uri = params.get('uri');
     const [path, setPath] = useState<string[]>([]);
+    const { open } = useNotification();
+
     useEffect(() => {
         if (!uri) {
             setPath([]);
@@ -31,8 +34,19 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
             ...url.pathname.split('/').filter(x => x),
         ]);
     }, [uri]);
-    return (
 
+    function sharePage() {
+        return navigator.clipboard.writeText(window.location.href).then(
+            () => open?.({
+                type: "success",
+                message: "Copied link to clipboard",
+                description: "",
+                key: "copy-link",
+            }
+        ));
+    }
+
+    return (
         <Toolbar variant="dense">
             <Stack direction="row" width="100%" alignItems="center">
                 <HamburgerMenu/>
@@ -57,7 +71,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                     alignItems="center"
                     id="header-flex-end"
                 >
-                    <MenuItem aria-label="share-resource" disabled>Share</MenuItem>
+                    <MenuItem onClick={sharePage} aria-label="share-resource" >Share</MenuItem>
                     <IconButton aria-label="resource-history" disabled color="primary" size="small">
                         <HistoryOutlined />
                     </IconButton>
