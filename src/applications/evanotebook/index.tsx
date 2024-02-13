@@ -13,27 +13,39 @@ import { MathExtension } from "tiptap-math-extension";
 import "katex/dist/katex.min.css";
 import {BlockNoteEditor, DefaultBlockSchema, defaultBlockSpecs, formatKeyboardShortcut, defaultProps, PartialBlock} from "@blocknote/core";
 import {Code} from '@mui/icons-material';
-
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { materialDark, materialDarkInit, materialLight, materialLightInit } from '@uiw/codemirror-theme-material';
+import { color, colorView, colorTheme } from '@uiw/codemirror-extensions-color';
+import { hyperLink, hyperLinkExtension, hyperLinkStyle } from '@uiw/codemirror-extensions-hyper-link';
 
 const codeblock = createReactBlockSpec(
     {
         type: "codeblock",
         propSchema: {
-            src: {
-                default:
-                    "https://www.pulsecarshalton.co.uk/wp-content/uploads/2016/08/jk-placeholder-image.jpg",
+            code: {
+                default: ""
             },
         },
         content: "none",
     },
     {
-        render: (props) => (
-            <img
-                className={"simple-image"}
-                src={props.block.props.src}
-                alt="placeholder"
-            />
-        ),
+        render: (props) => {
+            const {mode} = useContext(ColorModeContext);
+            return (
+                <CodeMirror
+                    value={props.block.props.code}
+                    onChange={(code) => {
+                        props.editor.updateBlock(props.block, {
+                            type: "codeblock",
+                            props: { code },
+                        });
+                    }}
+                    extensions={[javascript({ jsx: true }), color, hyperLink]}
+                    theme={mode === "dark" ? materialDark : materialLight}
+                />
+            )
+        }
     }
 );
 

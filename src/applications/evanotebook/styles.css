@@ -5,3 +5,7 @@
     */
     --bn-colors-editor-background: #121212;
 }
+
+.cm-editor.cm-focused {
+    outline: none !important;
+}
