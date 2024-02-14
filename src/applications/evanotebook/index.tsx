@@ -1,58 +1,109 @@
-import {IResourceComponentsProps, useGetIdentity} from "@refinedev/core";
-import {BlockNoteView, createReactBlockSpec, getDefaultReactSlashMenuItems, useBlockNote} from "@blocknote/react";
+import {IResourceComponentsProps, useGetIdentity, useNotification} from "@refinedev/core";
+import {
+    BlockNoteView,
+    createReactBlockSpec, DragHandle,
+    getDefaultReactSlashMenuItems, SideMenu, SideMenuButton, SideMenuPositioner,
+    SideMenuProps,
+    AddBlockButton,
+    useBlockNote,
+    DefaultSideMenu
+} from "@blocknote/react";
 import "@blocknote/react/style.css";
 import './styles.css';
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
 import {Doc} from "yjs";
 import {IndexeddbPersistence} from 'y-indexeddb';
 import YPartyKitProvider from "y-partykit/provider";
 import {useQuery} from "../../utility/useQuery";
 import {Button, CircularProgress, useMediaQuery} from "@mui/material";
-import { MathExtension } from "tiptap-math-extension";
+import {MathExtension} from "tiptap-math-extension";
 import "katex/dist/katex.min.css";
-import {BlockNoteEditor, DefaultBlockSchema, defaultBlockSpecs, formatKeyboardShortcut, defaultProps, PartialBlock} from "@blocknote/core";
-import {Code} from '@mui/icons-material';
-import CodeMirror from '@uiw/react-codemirror';
-import { javascript } from '@codemirror/lang-javascript';
-import { materialDark, materialDarkInit, materialLight, materialLightInit } from '@uiw/codemirror-theme-material';
-import { color, colorView, colorTheme } from '@uiw/codemirror-extensions-color';
-import { hyperLink, hyperLinkExtension, hyperLinkStyle } from '@uiw/codemirror-extensions-hyper-link';
+import {
+    BlockNoteEditor,
+    DefaultBlockSchema,
+    defaultBlockSpecs,
+    formatKeyboardShortcut,
+    defaultProps,
+    PartialBlock
+} from "@blocknote/core";
+import {Code, PlayArrow, PlayCircle} from '@mui/icons-material';
+import CodeMirror, {keymap, Prec} from '@uiw/react-codemirror';
+import {python} from '@codemirror/lang-python';
+import {materialDark, materialDarkInit, materialLight, materialLightInit} from '@uiw/codemirror-theme-material';
+import {color, colorView, colorTheme} from '@uiw/codemirror-extensions-color';
+import {hyperLink, hyperLinkExtension, hyperLinkStyle} from '@uiw/codemirror-extensions-hyper-link';
+import { IconButton, Tooltip } from '@mui/material';
+import _ from 'lodash';
+import Typography from "@mui/material/Typography";
 
-const codeblock = createReactBlockSpec(
-    {
-        type: "codeblock",
-        propSchema: {
-            code: {
-                default: ""
-            },
+let pyodide: any = null;
+
+async function importPyodide() {
+    if (pyodide)
+        return pyodide;
+    // @ts-ignore
+    pyodide = await window.loadPyodide();
+    return pyodide;
+}
+
+const codeblock = createReactBlockSpec({
+    type: "codeblock", propSchema: {
+        code: {
+            default: ""
         },
-        content: "none",
-    },
-    {
-        render: (props) => {
-            const {mode} = useContext(ColorModeContext);
-            return (
-                <CodeMirror
-                    value={props.block.props.code}
-                    onChange={(code) => {
-                        props.editor.updateBlock(props.block, {
-                            type: "codeblock",
-                            props: { code },
-                        });
-                    }}
-                    extensions={[javascript({ jsx: true }), color, hyperLink]}
-                    theme={mode === "dark" ? materialDark : materialLight}
-                />
-            )
-        }
+    }, content: "none",
+}, {
+    render: (props) => {
+        const {mode} = useContext(ColorModeContext);
+        const { open, close } = useNotification();
+        const [output, write] = useState<string>("");
+        return (<div>
+            <CodeMirror
+                value={props.block.props.code}
+                onChange={(code) => {
+                    props.editor.updateBlock(props.block, {
+                        type: "codeblock", props: {code},
+                    });
+                }}
+                extensions={[
+                    Prec.highest(
+                        keymap.of([
+                            { key: "Mod-Enter", run: (command) => {
+                                    open?.({
+                                        type: "progress",
+                                        message: "We've begun executing your code.",
+                                        description: "Loading...",
+                                    });
+                                    importPyodide().then(pyodide => {
+                                        pyodide.setStdin({ stdin: () => prompt() });
+                                        pyodide.setStderr({ stdin: (output: React.SetStateAction<string>) => write(output) });
+                                        pyodide.setStdout({
+                                            batched: (input: string) => {
+                                                write(input);
+                                            }
+                                        });
+                                        return pyodide.runPythonAsync(command.state.doc.toString());
+                                    }).then(x => write(x)).catch(
+                                        output => write(output.message)
+                                    );
+                                    return true;
+                                }
+                            }
+                        ])
+                    ),
+                    python(), color, hyperLink
+                ]}
+                theme={mode === "dark" ? materialDark : materialLight}
+            />
+            <pre>
+                {output}
+            </pre>
+        </div>)
     }
-);
+});
 
-function insertOrUpdateBlock<BSchema extends DefaultBlockSchema>(
-    editor: BlockNoteEditor<BSchema>,
-    block: PartialBlock<BSchema, any, any>,
-) {
+function insertOrUpdateBlock<BSchema extends DefaultBlockSchema>(editor: BlockNoteEditor<BSchema>, block: PartialBlock<BSchema, any, any>,) {
     const currentBlock = editor.getTextCursorPosition().block;
     // @ts-ignore
     const hasContent: boolean = (currentBlock.content.length === 1 && currentBlock.content[0].type === "text" && currentBlock.content[0].text === "/") || currentBlock.content.length === 0;
@@ -82,27 +133,14 @@ const Application: React.FC<IResourceComponentsProps> = () => {
             provider, fragment: doc.getXmlFragment("document-store"), user: {
                 name: identity?.email ?? "", color: identity?.color ?? "",
             },
-        },
-        blockSpecs: {
-            ...defaultBlockSpecs,
-            codeblock: codeblock
-        },
-        slashMenuItems: [
-            ...getDefaultReactSlashMenuItems(),
-            {
-                name: "Code block",
-                execute: (editor) =>
-                    insertOrUpdateBlock(editor, {
-                        type: "codeblock",
-                    }),
-                aliases: ["code"],
-                // @ts-ignore
-                hint: "Add a live code block",
-                group: "Code",
-                icon: <Code />,
-            },
-        ],
-        _tiptapOptions: {
+        }, blockSpecs: {
+            ...defaultBlockSpecs, codeblock: codeblock
+        }, slashMenuItems: [...getDefaultReactSlashMenuItems(), {
+            name: "Code block", execute: (editor) => insertOrUpdateBlock(editor, {
+                type: "codeblock",
+            }), aliases: ["code"], // @ts-ignore
+            hint: "Add a live code block", group: "Code", icon: <Code/>,
+        },], _tiptapOptions: {
             extensions: [MathExtension]
         }
     }, [uri]);
@@ -115,7 +153,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
     });
 
 
-    return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor}/>;
+    return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor} />;
 };
 
 export default Application;
