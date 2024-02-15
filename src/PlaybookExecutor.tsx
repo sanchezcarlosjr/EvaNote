@@ -11,29 +11,22 @@ export function PlaybookExecutor() {
     useEffect(() => {
         if (!playbook || !data)
             return;
-        playbook.dependencies.forEach(async (dependency: { uri: string | URL; integrity: string }) => {
+        const promises: Promise<{mount: () => void, unmount: () => void}[]> = Promise.all(playbook.dependencies.map(async (dependency: { uri: string | URL; integrity: string }) => {
             const url = new URL(dependency.uri);
             const path = url.pathname.split("/").filter(x => x);
             const { data: blob, error } = await supabaseClient.storage.from(path[0]).download(path.slice(1).join('/'));
             if (error) {
                 return;
             }
-            const algorithm = dependency.integrity.split(':')[0];
-            const hashAsArrayBuffer = await crypto.subtle.digest(algorithm, await blob?.arrayBuffer())
-            const uint8ViewOfHash = new Uint8Array(hashAsArrayBuffer);
-            const hashAsString = Array.from(uint8ViewOfHash).map((b) => b.toString(16).padStart(2, "0")).join("");
-            if (`${algorithm}:${hashAsString}` !== dependency.integrity) {
-                open?.({
-                    type: "error",
-                    message: "Something goes wrong.",
-                    description: `We could install the dependency ${dependency.uri}.`,
-                    key: "notification-key",
-                });
-                return;
-            }
             const objectURL = URL.createObjectURL(blob as Blob);
-            import(/* @vite-ignore */ objectURL).then();
-        });
+            return import(/* @vite-ignore */ objectURL).then(module => {
+                module.mount();
+                return module;
+            });
+        }));
+        return () => {
+            promises.then(dependencies => dependencies.map(dependency => dependency.unmount()));
+        }
     }, [playbook, data]);
     return <></>;
 }
