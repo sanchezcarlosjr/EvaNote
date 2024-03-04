@@ -1,10 +1,10 @@
 {
   "name": "Default playbook",
-  "description": "",
-  "version": "",
-  "keywords": "",
-  "license": "",
-  "author": "",
+  "description": "Default playbook for EvaTutor",
+  "version": "1.0.0",
+  "keywords": "EvaTutor",
+  "license": "MIT",
+  "author": "sanchezcarlosjr",
   "settings": {
      "language": "auto",
      "theme": {
@@ -19,7 +19,7 @@
     "uriAssociation": [
       {
         "name": "Notebook",
-        "pattern": ".+\\.todo\\.nb$",
+        "pattern": "^((?!\\.).)*$",
         "meta": {
           "icon": "Try"
         },
@@ -53,7 +53,7 @@
   },
   "dependencies": [
     {
-      "uri": "supabase+s3:/dependencies/evatutor/gradio-float-chatbot.js",
+      "uri": "supabase+s3:/dependencies/evatutor/636faa5fddc198fd9e4f380c99f2b4baaab49ebc.js",
       "integrity": "",
       "headers": {},
       "environment": "browser",

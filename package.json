@@ -51,6 +51,8 @@
     "y-webrtc": "10.3.0"
   },
   "devDependencies": {
+    "@testing-library/dom": "^9.3.4",
+    "@testing-library/react": "^14.2.1",
     "@types/lodash": "^4.14.202",
     "@types/node": "18.19.14",
     "@types/react": "18.2.51",

@@ -4,7 +4,7 @@ import React, {
     createContext, PropsWithChildren, useEffect, useState,
 } from "react";
 
-type ProvisionContextType = any;
+
 import {render} from "@evanote/template-engine";
 import defaultPlaybook from '/playbook.json?raw';
 import {EditNote, InsertChart, Subject, SvgIconComponent, TextSnippet, Try} from "@mui/icons-material";
@@ -16,18 +16,35 @@ import path from "bfs-path";
 import {capitalize} from "@mui/material";
 import {createAction, Priority, useRegisterActions} from "@refinedev/kbar";
 import {Mutex} from "../../utility/mutex";
+import {Playbook} from "./types";
 
 
-const defaultPlaybookJson = render(defaultPlaybook, {});
+const defaultPlaybookJson: Playbook = render(defaultPlaybook, {});
+
+export interface ToolbarWidget {
+    label: string;
+    component: string;
+}
+
+interface ProvisionContextType {
+    playbook: Playbook;
+    resources: any;
+    filesystem: any;
+    toolbarWidgets: ToolbarWidget[];
+    widgets: any
+}
+
 export const ProvisionContext = createContext<ProvisionContextType>({
     playbook: defaultPlaybookJson,
     resources: [],
-    filesystem: null
+    filesystem: null,
+    toolbarWidgets: [],
+     widgets: {}
 } as ProvisionContextType);
 const mutex = new Mutex();
 
 interface URI extends ResourceProps {
-    pattern: RegExp;
+    pattern: RegExp|string;
     servicePreferenceOrder: string[];
 }
 
@@ -51,10 +68,15 @@ class URIAssociation {
 }
 
 export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}) => {
-    const [playbook, setPlaybook] = useState(defaultPlaybookJson);
+    const [playbook] = useState(defaultPlaybookJson);
+    const [toolbarWidgets, setToolbarWidgets] = useState<any>([]);
     const [filesystem, setFilesystem] = useState(null);
 
-    const uriAssociation = new URIAssociation(playbook.settings.uriAssociation.map((association: { meta: { icon: string | number; }; pattern: string | RegExp; }) => {
+    const addToolbarWidget = (dependency: any) => setToolbarWidgets([...toolbarWidgets, dependency]);
+
+    const widgets = {addToolbarWidget};
+
+    const uriAssociation = new URIAssociation(playbook.settings.uriAssociation.map((association: URI) => {
             // @ts-ignore
             //  Element implicitly has an 'any' type because expression of type 'string | number' can't be used to Indexer type
             const Icon: SvgIconComponent  = MaterialIcons[association.meta.icon as string] as SvgIconComponent;
@@ -150,7 +172,11 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
 
     return (<ProvisionContext.Provider
             value={{
-                playbook, resources, filesystem
+                playbook,
+                resources,
+                filesystem,
+                toolbarWidgets,
+                widgets
             }}
         >
             {children}
