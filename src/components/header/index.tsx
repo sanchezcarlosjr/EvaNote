@@ -109,7 +109,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
                 <IconButton onClick={toggleDrawer}>
                     <Close/>
                 </IconButton>
-                <div style={{width: "27vh"}} dangerouslySetInnerHTML={{__html: widget}}></div>
+                <div style={{width: "33vw"}} dangerouslySetInnerHTML={{__html: widget}}></div>
             </Drawer>
         </>
     );
