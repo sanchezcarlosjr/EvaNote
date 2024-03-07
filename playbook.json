@@ -53,7 +53,7 @@
   },
   "dependencies": [
     {
-      "uri": "supabase+s3:/dependencies/evatutor/ace1aac0bffd2909eba9f3cd7f3ae1a1d90134e9.js",
+      "uri": "supabase+s3:/dependencies/evatutor/637ba71e747b26c6eaf6c0d7b0e72d7304f31557.js",
       "integrity": "",
       "headers": {},
       "environment": "browser",
