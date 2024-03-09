@@ -1,8 +1,9 @@
 import {useContext, useEffect} from "react";
 import {ProvisionContext} from "./contexts/provision";
-import {useGetIdentity, useNotification} from "@refinedev/core";
+import {useGetIdentity} from "@refinedev/core";
 import {supabaseClient} from "./utility";
 import {Dependency, Playbook} from "./contexts/provision/types";
+import {Identity} from "./providers/identity";
 
 
 class Supabase {
@@ -21,7 +22,7 @@ function factoryDependencyDownloader(dependency: Dependency) {
     return new Supabase(url);
 }
 
-function prepareInstallation(playbook: Playbook, widgets: any) {
+function prepareInstallation(playbook: Playbook, widgets: any, identity: any) {
     const promises: Promise<any[]> = Promise.all(playbook.dependencies.map(async (dependency: Dependency) => {
         const {data, error}  = await factoryDependencyDownloader(dependency).download();
         if (error) {
@@ -29,7 +30,7 @@ function prepareInstallation(playbook: Playbook, widgets: any) {
         }
         const objectURL = URL.createObjectURL(data as Blob);
         return import(/* @vite-ignore */ objectURL).then(importDependency => {
-            importDependency.declareWidgets(widgets);
+            importDependency.declareWidgets({widgets, identity});
             return dependency;
         });
     }));
@@ -40,13 +41,12 @@ function prepareInstallation(playbook: Playbook, widgets: any) {
 
 export function PlaybookExecutor() {
     const {playbook, widgets} = useContext(ProvisionContext);
-    const { data }= useGetIdentity();
-    const { open, close } = useNotification();
+    const { data: identity }= useGetIdentity<Identity>();
 
     useEffect(() => {
-        if (!playbook || !data)
+        if (!playbook || !identity)
             return;
-        return prepareInstallation(playbook, widgets);
-    }, [playbook, data]);
+        return prepareInstallation(playbook, widgets, identity);
+    }, [playbook, identity]);
     return <></>;
 }

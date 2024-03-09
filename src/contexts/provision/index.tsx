@@ -71,7 +71,6 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
     const [playbook] = useState(defaultPlaybookJson);
     const [toolbarWidgets, setToolbarWidgets] = useState<any>([]);
     const [filesystem, setFilesystem] = useState(null);
-
     const addToolbarWidget = (dependency: any) => setToolbarWidgets([...toolbarWidgets, dependency]);
 
     const widgets = {addToolbarWidget};
@@ -127,6 +126,8 @@ export const ProvisionContextProvider: React.FC<PropsWithChildren> = ({children}
             await fs.isReady;
 
             fs.writeFileSync('/tmp/playbook.json', JSON.stringify(playbook, null, 2));
+
+            fs.writeFileSync('/tmp/getting-started.nb', '');
 
             reloadResources();
 
