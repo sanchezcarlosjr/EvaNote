@@ -19,7 +19,7 @@ import {Mutex} from "../../utility/mutex";
 import {Playbook} from "./types";
 
 
-const defaultPlaybookJson: Playbook = render(defaultPlaybook, {});
+const defaultPlaybookJson: Playbook = render(defaultPlaybook, import.meta.env);
 
 export interface ToolbarWidget {
     label: string;
@@ -49,7 +49,7 @@ interface URI extends ResourceProps {
 }
 
 class URIAssociation {
-    // @TODO: Increase perfomance with a better data structure.
+    // @TODO: Increase performance with a better data structure.
     constructor(private uris: URI[] = []) {
     }
 
