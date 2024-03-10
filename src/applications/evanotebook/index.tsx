@@ -1,4 +1,4 @@
-import {IResourceComponentsProps, useGetIdentity, useNotification} from "@refinedev/core";
+import {IResourceComponentsProps, useGetIdentity, useGo, useNotification, useResource} from "@refinedev/core";
 import {
     BlockNoteView,
     createReactBlockSpec, DragHandle,
@@ -12,7 +12,7 @@ import "@blocknote/react/style.css";
 import './styles.css';
 import React, {useContext, useState} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
-import {Doc} from "yjs";
+import {Doc, PermanentUserData} from "yjs";
 import {IndexeddbPersistence} from 'y-indexeddb';
 import YPartyKitProvider from "y-partykit/provider";
 import {useQuery} from "../../utility/useQuery";
@@ -36,6 +36,8 @@ import {hyperLink, hyperLinkExtension, hyperLinkStyle} from '@uiw/codemirror-ext
 import { IconButton, Tooltip } from '@mui/material';
 import _ from 'lodash';
 import Typography from "@mui/material/Typography";
+import {Identity} from "../../providers/identity";
+import {redirect} from "react-router-dom";
 
 let pyodide: any = null;
 
@@ -120,12 +122,23 @@ function insertOrUpdateBlock<BSchema extends DefaultBlockSchema>(editor: BlockNo
 
 const Application: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
-    const {data: identity} = useGetIdentity<any>();
+    const {data: identity} = useGetIdentity<Identity>();
     const url = useQuery();
     const uri = url.get("uri") ?? "browser:/tmp/getting-started.nb";
+    const resource = useResource(new URL(uri).pathname);
+    const go = useGo();
+
+    if (!resource.resource.list) {
+        go({
+            to: "/not-found"
+        });
+        return null;
+    }
 
     const doc = new Doc();
     new IndexeddbPersistence(uri, doc);
+    const permantentUserData = new PermanentUserData(doc);
+
     const provider = new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", uri, doc);
 
     const editor = useBlockNote({
@@ -152,6 +165,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
         name: identity?.email ?? "", color: identity?.color ?? "",
     });
 
+    permantentUserData.setUserMapping(doc, doc.clientID, identity?.id ?? "");
 
     return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor} />;
 };
