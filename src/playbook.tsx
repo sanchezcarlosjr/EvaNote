@@ -1,4 +1,9 @@
-{
+import {render} from "./render";
+import {URIAssociation} from "./URIAssociation";
+import React from "react";
+import {Done, EditNote, TextSnippet, Try} from "@mui/icons-material";
+
+export default {
   "name": "Default playbook",
   "description": "Default playbook for EvaTutor",
   "version": "1.0.0",
@@ -16,40 +21,40 @@
         "redirect_policy": "always /user-progress"
       }
     },
-    "uriAssociation": [
+    "uriAssociation": new URIAssociation([
       {
         "name": "Notebook",
-        "pattern": "^((?!\\.).)*$",
+        "pattern": /^((?!\.).)*$/,
         "meta": {
-          "icon": "Try"
+          "icon": <Try />
         },
         "servicePreferenceOrder": ["evanotebook"]
       },
       {
         "name": "Notebook",
-        "pattern": ".+\\.done\\.nb$",
+        "pattern": /.+\.done\.nb$/,
         "meta": {
-          "icon": "Done"
+          "icon": <Done/>
         },
         "servicePreferenceOrder": ["evanotebook"]
       },
       {
         "name": "Notebook",
-        "pattern": ".+\\.nb$",
+        "pattern": /.+\.nb$/,
         "meta": {
-          "icon": "EditNote"
+          "icon": <EditNote/>
         },
         "servicePreferenceOrder": ["evanotebook"]
       },
       {
         "name": "Plain Text",
-        "pattern": ".+\\.txt$",
+        "pattern": /.+\.txt$/,
         "meta": {
-          "icon": "TextSnippet"
+          "icon": <TextSnippet />
         },
         "servicePreferenceOrder": ["text-editor"]
       }
-    ]
+    ])
   },
   "dependencies": [
     {
@@ -58,6 +63,23 @@
       "headers": {},
       "environment": "browser",
       "triggers": ["authentication"]
+    },
+    {
+      "uri": "in-memory:routes",
+      "integrity": "",
+      "headers": {},
+      "environment": "browser",
+      "triggers": ["authentication"],
+      "data": [
+        {
+          path: 'user-progress',
+          element: render("./applications/user-progress")
+        },
+        {
+          path: 'evanotebook',
+          element: render("./applications/evanotebook")
+        }
+      ]
     }
   ],
   "tasks": []

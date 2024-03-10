@@ -31,19 +31,16 @@ import {supabaseClient} from "./utility";
 import {ThemedSiderV2} from "./components/layout/sider";
 import {Title} from "./components/title";
 import {ProvisionContext, ProvisionContextProvider} from "./contexts/provision";
-import {MuiInferencer} from "@refinedev/inferencer/mui";
 import React, {useContext} from "react";
 import {PlaybookExecutor} from "./PlaybookExecutor";
 
-const Evanotebook = React.lazy(() => import("./applications/evanotebook"));
-const TextEditor = React.lazy(() => import("./applications/text-editor"));
+
 const Indexer = React.lazy(() => import("./applications/indexer"));
-const UserProgress = React.lazy(() => import("./applications/user-progress"));
 
 function ProvisionedRefine() {
     const {t, i18n} = useTranslation();
 
-    const {resources, playbook} = useContext(ProvisionContext);
+    const {resources, routes, playbook} = useContext(ProvisionContext);
 
     const i18nProvider = {
         translate: (key: string, params: object) => t(key, params),
@@ -69,7 +66,7 @@ function ProvisionedRefine() {
                     routerProvider={routerBindings}
                     notificationProvider={notificationProvider}
                     i18nProvider={i18nProvider}
-                    resources={[...resources]}
+                    resources={resources}
                     options={{
                         syncWithLocation: true,
                         warnWhenUnsavedChanges: true,
@@ -78,15 +75,15 @@ function ProvisionedRefine() {
                         projectId: "pjfDKi-64ao4Z-zGOW6b",
                     }}
                 >
+                    <PlaybookExecutor />
                     <Routes>
                         <Route
                             element={<Authenticated
                                 key="authenticated-inner"
                                 fallback={<CatchAllNavigate to="/login"/>}
                             >
-                                <PlaybookExecutor />
                                 <ThemedLayoutV2
-                                    Header={() => <Header sticky/>}
+                                    Header={() => <Header sticky />}
                                     Sider={ThemedSiderV2}
                                     Title={Title}
                                 >
@@ -99,19 +96,13 @@ function ProvisionedRefine() {
                                 index
                                 element={<Indexer />}
                             />
-                            <Route path="evanotebook">
-                                <Route index element={<Evanotebook/>}/>
-                            </Route>
-                            <Route path="text-editor">
-                                <Route index element={<TextEditor/>}/>
-                            </Route>
-                            <Route path="user-progress">
-                                <Route index element={<UserProgress/>}/>
-                            </Route>
-                            <Route path="audit-logs">
-                                <Route index element={<MuiInferencer hideCodeViewerInProduction/>}/>
-                                <Route path="show/:id" element={<MuiInferencer hideCodeViewerInProduction/>}/>
-                            </Route>
+                            {
+                                routes.map(route =>
+                                    <Route key={route.path} path={route.path}>
+                                        <Route index element={route.element}/>
+                                    </Route>
+                                )
+                            }
                             <Route path="*" element={<ErrorComponent/>}/>
                         </Route>
                         <Route

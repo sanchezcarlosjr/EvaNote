@@ -1,3 +1,5 @@
+import {URIAssociation} from "../../URIAssociation";
+
 export interface Playbook {
     name: string
     description: string
@@ -14,7 +16,7 @@ export interface Settings {
     language: string
     theme: Theme
     applications: Applications
-    uriAssociation: UriAssociation[]
+    uriAssociation: URIAssociation
 }
 
 export interface Theme {
@@ -47,6 +49,7 @@ export interface Dependency {
     headers: Headers
     environment: string
     triggers: string[]
+    data?: any
 }
 
 export interface Headers {}
