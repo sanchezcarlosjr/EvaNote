@@ -26,7 +26,7 @@ let pyodide: any = null;
 mermaid.initialize({
     startOnLoad: false,
     securityLevel: 'loose',
-    theme: 'neutral',
+    theme: 'forest',
 });
 
 mermaid.run({
@@ -93,7 +93,7 @@ const MermaidChart = ({ chart }: {chart: string}) => {
     const [svg, setSvg] = useState('');
     const diagramId = `mermaid-${Math.floor(Math.random() * 1000000)}`;
 
-    chart = chart.replace("$EVANOTE_THEME", mode == "dark" ? "dark" : "neutral");
+    chart = chart.replace("$EVANOTE_THEME", mode == "dark" ? "dark" : "forest");
 
     useEffect(() => {
         if (chart && mermaidRef.current) {
