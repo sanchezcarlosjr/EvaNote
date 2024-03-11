@@ -33,7 +33,7 @@ export class URIAssociation {
                 label: capitalize(resource.meta?.label ?? ""),
                 icon: uri?.meta?.icon ?? <TextSnippet/>
             },
-            list: `/${application}?uri=browser:${resource.name}`
+            list: `/${application}?uri=${resource.meta?.uri ?? `browser:${resource.name}`}`
         }
     }
 

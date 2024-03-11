@@ -2,6 +2,7 @@ import {render} from "./render";
 import {URIAssociation} from "./URIAssociation";
 import React from "react";
 import {Done, EditNote, TextSnippet, Try} from "@mui/icons-material";
+import Evanotebook from "./applications/evanotebook";
 
 export default {
   "name": "Default playbook",
@@ -73,7 +74,7 @@ export default {
       "data": [
         {
           path: 'evanotebook',
-          element: render("./applications/evanotebook")
+          element: <Evanotebook />
         }
       ]
     }
