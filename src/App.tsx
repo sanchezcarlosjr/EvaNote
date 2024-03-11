@@ -1,4 +1,4 @@
-import {Authenticated, Refine} from "@refinedev/core";
+import {Authenticated, CanAccess, Refine} from "@refinedev/core";
 import {DevtoolsPanel, DevtoolsProvider} from "@refinedev/devtools";
 import {RefineKbar, RefineKbarProvider} from "@refinedev/kbar";
 import {GitHub, Google} from "@mui/icons-material";
@@ -33,6 +33,7 @@ import {Title} from "./components/title";
 import {ProvisionContext, ProvisionContextProvider} from "./contexts/provision";
 import React, {useContext} from "react";
 import {PlaybookExecutor} from "./PlaybookExecutor";
+import {accessControlProvider} from "./providers/access-control-provider";
 
 
 const Indexer = React.lazy(() => import("./applications/indexer"));
@@ -63,6 +64,7 @@ function ProvisionedRefine() {
                     dataProvider={dataProvider(supabaseClient)}
                     liveProvider={liveProvider(supabaseClient)}
                     authProvider={authProvider}
+                    accessControlProvider={accessControlProvider}
                     routerProvider={routerBindings}
                     notificationProvider={notificationProvider}
                     i18nProvider={i18nProvider}
@@ -92,17 +94,17 @@ function ProvisionedRefine() {
                                 <RefineKbar/>
                             </Authenticated>}
                         >
-                            <Route
-                                index
-                                element={<Indexer />}
-                            />
-                            {
-                                routes.map(route =>
-                                    <Route key={route.path} path={route.path}>
-                                        <Route index element={route.element}/>
-                                    </Route>
-                                )
-                            }
+                                <Route
+                                    index
+                                    element={<Indexer />}
+                                />
+                                {
+                                    routes.map(route =>
+                                        <Route key={route.path} path={route.path}>
+                                            <Route index element={route.element}/>
+                                        </Route>
+                                    )
+                                }
                             <Route path="*" element={<ErrorComponent/>}/>
                         </Route>
                         <Route

@@ -1,4 +1,4 @@
-import {IResourceComponentsProps, useGetIdentity, useNotification} from "@refinedev/core";
+import {IResourceComponentsProps, useGetIdentity, useNotification, useResource} from "@refinedev/core";
 import {BlockNoteView, createReactBlockSpec, getDefaultReactSlashMenuItems, useBlockNote} from "@blocknote/react";
 import "@blocknote/react/style.css";
 import './styles.css';
@@ -26,7 +26,7 @@ let pyodide: any = null;
 mermaid.initialize({
     startOnLoad: false,
     securityLevel: 'loose',
-    theme: 'base',
+    theme: 'neutral',
 });
 
 mermaid.run({
@@ -53,6 +53,7 @@ const codeblock = createReactBlockSpec({
         const [output, write] = useState<string>("");
         return (<div>
             <CodeMirror
+                editable={props.editor.isEditable}
                 value={props.block.props.code}
                 onChange={(code) => {
                     props.editor.updateBlock(props.block, {
@@ -87,9 +88,12 @@ const codeblock = createReactBlockSpec({
 });
 
 const MermaidChart = ({ chart }: {chart: string}) => {
+    const {mode} = useContext(ColorModeContext);
     const mermaidRef = useRef(null);
     const [svg, setSvg] = useState('');
     const diagramId = `mermaid-${Math.floor(Math.random() * 1000000)}`;
+
+    chart = chart.replace("$EVANOTE_THEME", mode == "dark" ? "dark" : "neutral");
 
     useEffect(() => {
         if (chart && mermaidRef.current) {
@@ -117,17 +121,19 @@ const mermaidblock = createReactBlockSpec({
         const [input, setInput] = useState(props.block.props.code);
 
         return (<div>
-            <CodeMirror
-                value={props.block.props.code}
-                onChange={(code) => {
-                    props.editor.updateBlock(props.block, {
-                        type: "mermaidblock", props: {code},
-                    });
-                    setInput(code);
-                }}
-                extensions={[color, hyperLink]}
-                theme={mode === "dark" ? materialDark : materialLight}
-            />
+            {
+                props.editor.isEditable ? <CodeMirror
+                    value={props.block.props.code}
+                    onChange={(code) => {
+                        props.editor.updateBlock(props.block, {
+                            type: "mermaidblock", props: {code},
+                        });
+                        setInput(code);
+                    }}
+                    extensions={[color, hyperLink]}
+                    theme={mode === "dark" ? materialDark : materialLight}
+                /> : null
+            }
             <MermaidChart chart={input} ></MermaidChart>
         </div>)
     }
@@ -153,6 +159,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
     const {data: identity} = useGetIdentity<Identity>();
     const url = useQuery();
     const uri = url.get("uri") ?? "browser:/tmp/getting-started.nb";
+    const {resource} = useResource(new URL(uri).pathname);
 
     const doc = new Doc();
     new IndexeddbPersistence(uri, doc);
@@ -161,6 +168,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
     const provider = new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", uri, doc);
 
     const editor = useBlockNote({
+        editable: true,
         collaboration: {
             provider, fragment: doc.getXmlFragment("document-store"), user: {
                 name: identity?.email ?? "", color: identity?.color ?? "",
