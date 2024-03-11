@@ -72,10 +72,6 @@ export default {
       "triggers": ["authentication"],
       "data": [
         {
-          path: 'user-progress',
-          element: render("./applications/user-progress")
-        },
-        {
           path: 'evanotebook',
           element: render("./applications/evanotebook")
         }
