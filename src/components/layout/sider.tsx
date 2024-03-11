@@ -16,7 +16,7 @@ import {
     useWarnAboutChange,
 } from "@refinedev/core";
 import type {RefineThemedLayoutV2SiderProps} from "@refinedev/mui";
-import {ThemedTitleV2 as DefaultTitle, useThemedLayoutContext,} from "@refinedev/mui";
+import {ThemedTitleV2 as DefaultTitle,} from "@refinedev/mui";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import Dashboard from "@mui/icons-material/Dashboard";
 import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -36,6 +36,7 @@ import {Search} from "@mui/icons-material";
 import {createAction, Priority, useKBar, useRegisterActions} from "@refinedev/kbar";
 import {useContextMenu} from "../context-menu/useContextMenu";
 import {ContextMenu} from "../context-menu/contextMenu";
+import {useThemedLayoutContext} from "./useThemedLayoutContext";
 
 
 export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
@@ -50,6 +51,8 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
         mobileSiderOpen,
         setMobileSiderOpen,
     } = useThemedLayoutContext();
+
+    console.log(siderCollapsed);
 
     const drawerWidth = () => {
         if (siderCollapsed) return 56;

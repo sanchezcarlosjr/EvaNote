@@ -1,8 +1,8 @@
 import React from "react";
-import { useThemedLayoutContext } from "@refinedev/mui";
 import Menu from "@mui/icons-material/Menu";
 import IconButton from "@mui/material/IconButton";
 import type { IconButtonProps } from "@mui/material/IconButton";
+import {useThemedLayoutContext} from "./useThemedLayoutContext";
 
 const HamburgerIcon = (props: IconButtonProps) => (
   <IconButton color="inherit" aria-label="open drawer" edge="start" {...props}>

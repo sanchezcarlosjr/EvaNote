@@ -8,7 +8,6 @@ import {
     ErrorComponent,
     notificationProvider,
     RefineSnackbarProvider,
-    ThemedLayoutV2,
     ThemedTitleV2,
 } from "@refinedev/mui";
 
@@ -31,9 +30,11 @@ import {supabaseClient} from "./utility";
 import {ThemedSiderV2} from "./components/layout/sider";
 import {Title} from "./components/title";
 import {ProvisionContext, ProvisionContextProvider} from "./contexts/provision";
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {PlaybookExecutor} from "./PlaybookExecutor";
 import {accessControlProvider} from "./providers/access-control-provider";
+import {RightSider} from "./components/header";
+import {ThemedLayoutV2} from "./components/layout";
 
 
 const Indexer = React.lazy(() => import("./applications/indexer"));
@@ -85,8 +86,9 @@ function ProvisionedRefine() {
                                 fallback={<CatchAllNavigate to="/login"/>}
                             >
                                 <ThemedLayoutV2
-                                    Header={() => <Header sticky />}
+                                    Header={Header}
                                     Sider={ThemedSiderV2}
+                                    OffLayoutArea={RightSider}
                                     Title={Title}
                                 >
                                     <Outlet/>
