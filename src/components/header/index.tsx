@@ -9,7 +9,7 @@ import {useQuery} from "../../utility/useQuery";
 import {useLink, useNotification, useResource} from "@refinedev/core";
 import {ProvisionContext} from "../../contexts/provision";
 import Drawer from "@mui/material/Drawer";
-import {IResourceItem} from "@refinedev/core/src/interfaces";
+import {IResourceItem} from "@refinedev/core";
 
 
 type IUser = {

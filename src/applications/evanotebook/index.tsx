@@ -1,13 +1,5 @@
-import {IResourceComponentsProps, useGetIdentity, useGo, useNotification, useResource} from "@refinedev/core";
-import {
-    BlockNoteView,
-    createReactBlockSpec, DragHandle,
-    getDefaultReactSlashMenuItems, SideMenu, SideMenuButton, SideMenuPositioner,
-    SideMenuProps,
-    AddBlockButton,
-    useBlockNote,
-    DefaultSideMenu
-} from "@blocknote/react";
+import {IResourceComponentsProps, useGetIdentity, useNotification} from "@refinedev/core";
+import {BlockNoteView, createReactBlockSpec, getDefaultReactSlashMenuItems, useBlockNote} from "@blocknote/react";
 import "@blocknote/react/style.css";
 import './styles.css';
 import React, {useContext, useState} from "react";
@@ -16,34 +8,22 @@ import {Doc, PermanentUserData} from "yjs";
 import {IndexeddbPersistence} from 'y-indexeddb';
 import YPartyKitProvider from "y-partykit/provider";
 import {useQuery} from "../../utility/useQuery";
-import {Button, CircularProgress, useMediaQuery} from "@mui/material";
+import {CircularProgress} from "@mui/material";
 import {MathExtension} from "tiptap-math-extension";
 import "katex/dist/katex.min.css";
-import {
-    BlockNoteEditor,
-    DefaultBlockSchema,
-    defaultBlockSpecs,
-    formatKeyboardShortcut,
-    defaultProps,
-    PartialBlock
-} from "@blocknote/core";
-import {Code, PlayArrow, PlayCircle} from '@mui/icons-material';
+import {BlockNoteEditor, DefaultBlockSchema, defaultBlockSpecs, PartialBlock} from "@blocknote/core";
+import {Code} from '@mui/icons-material';
 import CodeMirror, {keymap, Prec} from '@uiw/react-codemirror';
 import {python} from '@codemirror/lang-python';
-import {materialDark, materialDarkInit, materialLight, materialLightInit} from '@uiw/codemirror-theme-material';
-import {color, colorView, colorTheme} from '@uiw/codemirror-extensions-color';
-import {hyperLink, hyperLinkExtension, hyperLinkStyle} from '@uiw/codemirror-extensions-hyper-link';
-import { IconButton, Tooltip } from '@mui/material';
-import _ from 'lodash';
-import Typography from "@mui/material/Typography";
+import {materialDark, materialLight} from '@uiw/codemirror-theme-material';
+import {color} from '@uiw/codemirror-extensions-color';
+import {hyperLink} from '@uiw/codemirror-extensions-hyper-link';
 import {Identity} from "../../providers/identity";
-import {redirect} from "react-router-dom";
 
 let pyodide: any = null;
 
 async function importPyodide() {
-    if (pyodide)
-        return pyodide;
+    if (pyodide) return pyodide;
     // @ts-ignore
     pyodide = await window.loadPyodide();
     return pyodide;
@@ -58,7 +38,7 @@ const codeblock = createReactBlockSpec({
 }, {
     render: (props) => {
         const {mode} = useContext(ColorModeContext);
-        const { open, close } = useNotification();
+        const {open, close} = useNotification();
         const [output, write] = useState<string>("");
         return (<div>
             <CodeMirror
@@ -68,34 +48,24 @@ const codeblock = createReactBlockSpec({
                         type: "codeblock", props: {code},
                     });
                 }}
-                extensions={[
-                    Prec.highest(
-                        keymap.of([
-                            { key: "Mod-Enter", run: (command) => {
-                                    open?.({
-                                        type: "progress",
-                                        message: "We've begun executing your code.",
-                                        description: "Loading...",
-                                    });
-                                    importPyodide().then(pyodide => {
-                                        pyodide.setStdin({ stdin: () => prompt() });
-                                        pyodide.setStderr({ stdin: (output: React.SetStateAction<string>) => write(output) });
-                                        pyodide.setStdout({
-                                            batched: (input: string) => {
-                                                write(input);
-                                            }
-                                        });
-                                        return pyodide.runPythonAsync(command.state.doc.toString());
-                                    }).then(x => write(x)).catch(
-                                        output => write(output.message)
-                                    );
-                                    return true;
+                extensions={[Prec.highest(keymap.of([{
+                    key: "Mod-Enter", run: (command) => {
+                        open?.({
+                            type: "progress", message: "We've begun executing your code.", description: "Loading...",
+                        });
+                        importPyodide().then(pyodide => {
+                            pyodide.setStdin({stdin: () => prompt()});
+                            pyodide.setStderr({stdin: (output: React.SetStateAction<string>) => write(output)});
+                            pyodide.setStdout({
+                                batched: (input: string) => {
+                                    write(input);
                                 }
-                            }
-                        ])
-                    ),
-                    python(), color, hyperLink
-                ]}
+                            });
+                            return pyodide.runPythonAsync(command.state.doc.toString());
+                        }).then(x => write(x)).catch(output => write(output.message));
+                        return true;
+                    }
+                }])), python(), color, hyperLink]}
                 theme={mode === "dark" ? materialDark : materialLight}
             />
             <pre>
@@ -125,15 +95,10 @@ const Application: React.FC<IResourceComponentsProps> = () => {
     const {data: identity} = useGetIdentity<Identity>();
     const url = useQuery();
     const uri = url.get("uri") ?? "browser:/tmp/getting-started.nb";
-    const resource = useResource(new URL(uri).pathname);
-    const go = useGo();
 
-    if (!resource.resource.list) {
-        go({
-            to: "/not-found"
-        });
-        return null;
-    }
+    // @ts-ignore
+    if (!identity && !identity?.color) return <CircularProgress/>;
+
 
     const doc = new Doc();
     new IndexeddbPersistence(uri, doc);
@@ -158,8 +123,6 @@ const Application: React.FC<IResourceComponentsProps> = () => {
         }
     }, [uri]);
 
-    if (!identity && !identity?.color) return <CircularProgress/>;
-
 
     editor.updateCollaborationUserInfo({
         name: identity?.email ?? "", color: identity?.color ?? "",
@@ -167,7 +130,9 @@ const Application: React.FC<IResourceComponentsProps> = () => {
 
     permantentUserData.setUserMapping(doc, doc.clientID, identity?.id ?? "");
 
-    return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor} />;
+    console.log(doc.getArray('versions'));
+
+    return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor}/>;
 };
 
 export default Application;

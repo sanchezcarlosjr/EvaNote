@@ -21,13 +21,14 @@ const Application: React.FC<IResourceComponentsProps> = () => {
                 return param;
             })
             .otherwise(() => resources[0].list);
+        // @ts-ignore
         navigate(route);
     }, [resources, playbook]);
 
     if (!identity || !identity?.color)
          return <CircularProgress/>;
 
-    return <p></p>;
+    return null;
 };
 
 export default Application;
