@@ -1,4 +1,3 @@
-import {render} from "./render";
 import {URIAssociation} from "./URIAssociation";
 import React from "react";
 import {Done, EditNote, TextSnippet, Try} from "@mui/icons-material";
