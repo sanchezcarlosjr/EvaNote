@@ -32,7 +32,6 @@ import {Title} from "./components/title";
 import {ProvisionContext, ProvisionContextProvider} from "./contexts/provision";
 import React, {useContext, useState} from "react";
 import {PlaybookExecutor} from "./PlaybookExecutor";
-import {accessControlProvider} from "./providers/access-control-provider";
 import {RightSider} from "./components/header";
 import {ThemedLayoutV2} from "./components/layout";
 
@@ -65,7 +64,6 @@ function ProvisionedRefine() {
                     dataProvider={dataProvider(supabaseClient)}
                     liveProvider={liveProvider(supabaseClient)}
                     authProvider={authProvider}
-                    accessControlProvider={accessControlProvider}
                     routerProvider={routerBindings}
                     notificationProvider={notificationProvider}
                     i18nProvider={i18nProvider}

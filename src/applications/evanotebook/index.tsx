@@ -1,4 +1,11 @@
-import {IResourceComponentsProps, useGetIdentity, useNotification, useResource} from "@refinedev/core";
+import {
+    IResourceComponentsProps,
+    IResourceItem,
+    useCan,
+    useGetIdentity,
+    useNotification,
+    useResource
+} from "@refinedev/core";
 import {BlockNoteView, createReactBlockSpec, getDefaultReactSlashMenuItems, useBlockNote} from "@blocknote/react";
 import "@blocknote/react/style.css";
 import './styles.css';
@@ -157,15 +164,15 @@ function insertOrUpdateBlock<BSchema extends DefaultBlockSchema>(editor: BlockNo
 const Application: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
     const {data: identity} = useGetIdentity<Identity>();
-    const url = useQuery();
-    const uri = url.get("uri") ?? "browser:/tmp/getting-started.nb";
-    const {resource} = useResource(new URL(uri).pathname);
+    const {resource} = useResource();
+
+    const name = resource?.name ?? "getting-started";
 
     const doc = new Doc();
-    new IndexeddbPersistence(uri, doc);
+    new IndexeddbPersistence(name, doc);
     const permantentUserData = new PermanentUserData(doc);
 
-    const provider = new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", uri, doc);
+    const provider = new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", name, doc);
 
     const editor = useBlockNote({
         editable: true,
@@ -199,7 +206,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
         ], _tiptapOptions: {
             extensions: [MathExtension]
         }
-    }, [uri]);
+    }, [name]);
 
 
     editor.updateCollaborationUserInfo({

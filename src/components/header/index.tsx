@@ -50,16 +50,14 @@ export const RightSider = () => {
 
 
 const useBreadcrumb = () => {
-    const params = useQuery();
-    const uri = new URL(params.get('uri') ?? "browser:/tmp");
-    const resource = useResource(uri.pathname);
-    const path: (IResourceItem | null)[] = [null, null, null, null];
+    const resource = useResource();
+    const path: (IResourceItem | null | undefined)[] = [null, null, null, null];
     let parent = resource.resource;
     let i = path.length - 1;
     do {
         path[i] = parent;
         i = i > 0 ? i - 1 : 0;
-    } while ((parent = resource.select(parent.meta?.parent ?? "").resource).name);
+    } while ((parent = resource.select(parent?.meta?.parent ?? "").resource).name);
     return path.filter(x => x) as IResourceItem[];
 }
 

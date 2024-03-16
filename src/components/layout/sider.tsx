@@ -37,6 +37,9 @@ import {createAction, Priority, useKBar, useRegisterActions} from "@refinedev/kb
 import {useContextMenu} from "../context-menu/useContextMenu";
 import {ContextMenu} from "../context-menu/contextMenu";
 import {useThemedLayoutContext} from "./useThemedLayoutContext";
+import {Button, ListItem} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import ResourceView from "../resource-view";
 
 
 export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
@@ -52,10 +55,8 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
         setMobileSiderOpen,
     } = useThemedLayoutContext();
 
-    console.log(siderCollapsed);
-
     const drawerWidth = () => {
-        if (siderCollapsed) return 56;
+        if (siderCollapsed) return 0;
         return 240;
     };
 
@@ -69,13 +70,8 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
 
     const {menuItems, selectedKey, defaultOpenKeys} = useMenu({meta});
 
-    const isExistAuthentication = useIsExistAuthentication();
     const TitleFromContext = useTitle();
     const authProvider = useActiveAuthProvider();
-    const {warnWhen, setWarnWhen} = useWarnAboutChange();
-    const {mutate: mutateLogout} = useLogout({
-        v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
-    });
 
     const [open, setOpen] = useState<{ [k: string]: any }>({});
 
@@ -101,157 +97,6 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
 
     const handleClick = (key: string) => {
         setOpen({...open, [key]: !open[key]});
-    };
-
-    const renderTreeView = (tree: ITreeMenu[], selectedKey?: string) => {
-        return tree.map((item: ITreeMenu) => {
-            const {icon, label, route, name, children, parentName, meta, options} =
-                item;
-            const isOpen = open[item.key || ""] || false;
-
-            const isSelected = item.key === selectedKey;
-            const isNested = !(
-                pickNotDeprecated(meta?.parent, options?.parent, parentName) ===
-                undefined
-            );
-
-            if (children.length > 0) {
-                return (
-                    <CanAccess
-                        key={item.key}
-                        resource={name.toLowerCase()}
-                        action="list"
-                        params={{
-                            resource: item,
-                        }}
-                    >
-                        <div key={item.key}>
-                            <Tooltip
-                                title={label ?? name}
-                                placement="right"
-                                disableHoverListener={!siderCollapsed}
-                                arrow
-                            >
-                                <ListItemButton
-                                    onClick={() => {
-                                        if (siderCollapsed) {
-                                            setSiderCollapsed(false);
-                                            if (!isOpen) {
-                                                handleClick(item.key || "");
-                                            }
-                                        } else {
-                                            handleClick(item.key || "");
-                                        }
-                                    }}
-                                    sx={{
-                                        pl: isNested ? 4 : 2,
-                                        justifyContent: "center",
-                                        marginTop: "8px",
-                                    }}
-                                >
-                                    <ListItemIcon
-                                        sx={{
-                                            justifyContent: "center",
-                                            minWidth: "24px",
-                                            transition: "margin-right 0.3s",
-                                            marginRight: siderCollapsed ? "0px" : "12px",
-                                            color: "currentColor",
-                                        }}
-                                    >
-                                        {icon ?? <ListOutlined/>}
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={label}
-                                        primaryTypographyProps={{
-                                            noWrap: true,
-                                            fontSize: "14px",
-                                        }}
-                                    />
-                                    {isOpen ? (
-                                        <ExpandLess
-                                            sx={{
-                                                color: "text.icon",
-                                            }}
-                                        />
-                                    ) : (
-                                        <ExpandMore
-                                            sx={{
-                                                color: "text.icon",
-                                            }}
-                                        />
-                                    )}
-                                </ListItemButton>
-                            </Tooltip>
-                            {!siderCollapsed && (
-                                <Collapse
-                                    in={open[item.key || ""]}
-                                    timeout="auto"
-                                    unmountOnExit
-                                >
-                                    <List component="div" disablePadding>
-                                        {renderTreeView(children, selectedKey)}
-                                    </List>
-                                </Collapse>
-                            )}
-                        </div>
-                    </CanAccess>
-                );
-            }
-
-            const linkStyle: CSSProperties =
-                activeItemDisabled && isSelected ? {pointerEvents: "none"} : {};
-
-            return (
-                <CanAccess
-                    key={item.key}
-                    resource={name.toLowerCase()}
-                    action="list"
-                    params={{resource: item}}
-                >
-                    <Tooltip
-                        title={label ?? name}
-                        placement="right"
-                        disableHoverListener={!siderCollapsed}
-                        arrow
-                    >
-                        <ListItemButton
-                            component={ActiveLink}
-                            to={route}
-                            selected={isSelected}
-                            style={linkStyle}
-                            onClick={() => {
-                                setMobileSiderOpen(false);
-                            }}
-                            sx={{
-                                pl: isNested ? 4 : 2,
-                                py: isNested ? 1.25 : 1,
-                                justifyContent: "center",
-                                color: isSelected ? "primary.main" : "text.primary",
-                            }}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    justifyContent: "center",
-                                    transition: "margin-right 0.3s",
-                                    marginRight: siderCollapsed ? "0px" : "12px",
-                                    minWidth: "24px",
-                                    color: "currentColor",
-                                }}
-                            >
-                                {icon ?? <ListOutlined/>}
-                            </ListItemIcon>
-                            <ListItemText
-                                primary={label}
-                                primaryTypographyProps={{
-                                    noWrap: true,
-                                    fontSize: "14px",
-                                }}
-                            />
-                        </ListItemButton>
-                    </Tooltip>
-                </CanAccess>
-            );
-        });
     };
 
     const dashboard = hasDashboard ? (
@@ -343,17 +188,9 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
         </Tooltip>
     );
 
-    const items = renderTreeView(menuItems, selectedKey);
+    const items = <ResourceView siderCollapsed={siderCollapsed} tree={menuItems} selectedKey={selectedKey} />;
 
     const renderSider = () => {
-        if (render) {
-            return render({
-                dashboard,
-                logout: null,
-                items,
-                collapsed: siderCollapsed,
-            });
-        }
         return (
             <>
                 {kbar}

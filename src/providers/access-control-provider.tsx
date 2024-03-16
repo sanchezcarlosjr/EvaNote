@@ -6,6 +6,7 @@ import {AccessControlProvider, CanParams, IAccessControlContext} from "@refinede
  **/
 export const accessControlProvider: AccessControlProvider = {
     can: async ({ resource, action, params }: CanParams) => {
+
         return { can: true };
     },
     options: {

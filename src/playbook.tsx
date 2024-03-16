@@ -1,6 +1,6 @@
 import {URIAssociation} from "./URIAssociation";
 import React from "react";
-import {Done, EditNote, TextSnippet, Try} from "@mui/icons-material";
+import {Done, EditNote, Folder, TextSnippet, Try} from "@mui/icons-material";
 import Evanotebook from "./applications/evanotebook";
 
 export default {
@@ -40,7 +40,7 @@ export default {
       },
       {
         "name": "Notebook",
-        "pattern": /.+\.nb$/,
+        "pattern": /nb/,
         "meta": {
           "icon": <EditNote/>
         },
@@ -48,11 +48,19 @@ export default {
       },
       {
         "name": "Plain Text",
-        "pattern": /.+\.txt$/,
+        "pattern": /plain-text/,
         "meta": {
           "icon": <TextSnippet />
         },
         "servicePreferenceOrder": ["text-editor"]
+      },
+      {
+        "name": "Directory",
+        "pattern": /directory/,
+        "meta": {
+          "icon": <Folder />
+        },
+        "servicePreferenceOrder": ["evanotebook"]
       }
     ])
   },
@@ -72,7 +80,7 @@ export default {
       "triggers": ["authentication"],
       "data": [
         {
-          path: 'evanotebook',
+          path: 'evanotebook/:id',
           element: <Evanotebook />
         }
       ]

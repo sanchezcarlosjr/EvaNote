@@ -23,8 +23,8 @@ export class URIAssociation {
         return this.uris[index];
     }
 
-    map(resource: ResourceProps) {
-        const uri = this.find(resource.name);
+    map(resource: ResourceProps & {settings: object|null}) {
+        const uri = this.find(resource?.meta?.['content-type'] ?? "");
         let application = uri?.servicePreferenceOrder[0] ?? "text-editor";
         return {
             name: resource.name,
@@ -33,8 +33,9 @@ export class URIAssociation {
                 label: capitalize(resource.meta?.label ?? ""),
                 icon: uri?.meta?.icon ?? <TextSnippet/>
             },
-            list: `/${application}?uri=${resource.meta?.uri ?? `browser:${resource.name}`}`
-        }
+            list: `/${application}/${resource.name}`,
+            show: `/${application}/${resource.name}`
+        };
     }
 
 }
