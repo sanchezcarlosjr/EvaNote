@@ -161,26 +161,42 @@ function insertOrUpdateBlock<BSchema extends DefaultBlockSchema>(editor: BlockNo
     }
 }
 
+
+type Collaboration = {fragment: any, user: {name: string, color: string}, provider: any, renderCursor?: ((user: any) => HTMLElement) | undefined} | undefined
+
 const Application: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
     const {data: identity} = useGetIdentity<Identity>();
     const {resource} = useResource();
 
-    const name = resource?.name ?? "getting-started";
+    const name = resource?.meta?.uri ?? resource?.name  ?? "";
 
     const doc = new Doc();
-    new IndexeddbPersistence(name, doc);
     const permantentUserData = new PermanentUserData(doc);
 
-    const provider = new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", name, doc);
+    const [collaboration, setCollaboration] = useState<Collaboration>(undefined);
+
+    useEffect(() => {
+        if (!name || !identity?.email || !identity?.color)
+            return;
+        const indexeddbPersistence = new IndexeddbPersistence(name, doc);
+        setCollaboration( {
+            provider: new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", name, doc),
+            fragment: doc.getXmlFragment("document-store"), user: {
+                name: identity?.email ?? "", color: identity?.color ?? "",
+            }
+        });
+        return () => {
+            collaboration?.provider?.destroy();
+            indexeddbPersistence.destroy().then();
+        }
+    }, [name, identity]);
+
 
     const editor = useBlockNote({
-        editable: true,
-        collaboration: {
-            provider, fragment: doc.getXmlFragment("document-store"), user: {
-                name: identity?.email ?? "", color: identity?.color ?? "",
-            },
-        }, blockSpecs: {
+        editable: !!collaboration,
+        collaboration,
+        blockSpecs: {
             ...defaultBlockSpecs,
             codeblock,
             mermaidblock
@@ -206,17 +222,17 @@ const Application: React.FC<IResourceComponentsProps> = () => {
         ], _tiptapOptions: {
             extensions: [MathExtension]
         }
-    }, [name]);
+    }, [collaboration]);
 
+
+    // @ts-ignore
+    if (!collaboration) return <CircularProgress/>;
+
+    permantentUserData.setUserMapping(doc, doc.clientID, identity?.id ?? "");
 
     editor.updateCollaborationUserInfo({
         name: identity?.email ?? "", color: identity?.color ?? "",
     });
-
-    permantentUserData.setUserMapping(doc, doc.clientID, identity?.id ?? "");
-
-    // @ts-ignore
-    if (!identity && !identity?.color) return <CircularProgress/>;
 
 
     return <BlockNoteView theme={mode as 'light' | 'dark'} editor={editor}/>;

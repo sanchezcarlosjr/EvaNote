@@ -188,7 +188,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
         </Tooltip>
     );
 
-    const items = <ResourceView siderCollapsed={siderCollapsed} tree={menuItems} selectedKey={selectedKey} />;
+    const items = <ResourceView tree={menuItems} selectedKey={selectedKey} />;
 
     const renderSider = () => {
         return (
