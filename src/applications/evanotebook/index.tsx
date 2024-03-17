@@ -171,6 +171,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
 
     const name = resource?.meta?.uri ?? resource?.name  ?? "";
 
+
     const doc = new Doc();
     const permantentUserData = new PermanentUserData(doc);
 

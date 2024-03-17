@@ -50,117 +50,119 @@ function ProvisionedRefine() {
     };
 
 
-    return <ColorModeContextProvider>
-        <CssBaseline/>
-        <GlobalStyles styles={{
-            html: {
-                WebkitFontSmoothing: "auto",
-                '* :not(.katex-html span)': {fontFamily: playbook.settings.theme.fontFamily}
-            }
-        }}/>
-        <RefineSnackbarProvider>
-            <DevtoolsProvider>
-                <Refine
-                    dataProvider={dataProvider(supabaseClient)}
-                    liveProvider={liveProvider(supabaseClient)}
-                    authProvider={authProvider}
-                    routerProvider={routerBindings}
-                    notificationProvider={notificationProvider}
-                    i18nProvider={i18nProvider}
-                    resources={resources}
-                    options={{
-                        syncWithLocation: true,
-                        warnWhenUnsavedChanges: true,
-                        useNewQueryKeys: true,
-                        disableTelemetry: true,
-                        projectId: "pjfDKi-64ao4Z-zGOW6b",
-                    }}
-                >
-                    <PlaybookExecutor />
-                    <Routes>
-                        <Route
-                            element={<Authenticated
-                                key="authenticated-inner"
-                                fallback={<CatchAllNavigate to="/login"/>}
-                            >
-                                <ThemedLayoutV2
-                                    Header={Header}
-                                    Sider={ThemedSiderV2}
-                                    OffLayoutArea={RightSider}
-                                    Title={Title}
+    return (
+        <ColorModeContextProvider>
+            <CssBaseline/>
+            <GlobalStyles styles={{
+                html: {
+                    WebkitFontSmoothing: "auto",
+                    '* :not(.katex-html span)': {fontFamily: playbook.settings.theme.fontFamily}
+                }
+            }}/>
+            <RefineSnackbarProvider>
+                <DevtoolsProvider>
+                    <Refine
+                        dataProvider={dataProvider(supabaseClient)}
+                        liveProvider={liveProvider(supabaseClient)}
+                        authProvider={authProvider}
+                        routerProvider={routerBindings}
+                        notificationProvider={notificationProvider}
+                        i18nProvider={i18nProvider}
+                        resources={resources}
+                        options={{
+                            syncWithLocation: true,
+                            warnWhenUnsavedChanges: true,
+                            useNewQueryKeys: true,
+                            disableTelemetry: true,
+                            projectId: "pjfDKi-64ao4Z-zGOW6b",
+                        }}
+                    >
+                        <PlaybookExecutor />
+                        <Routes>
+                            <Route
+                                element={<Authenticated
+                                    key="authenticated-inner"
+                                    fallback={<CatchAllNavigate to="/login"/>}
                                 >
-                                    <Outlet/>
-                                </ThemedLayoutV2>
-                                <RefineKbar/>
-                            </Authenticated>}
-                        >
-                                <Route
-                                    index
-                                    element={<Indexer />}
-                                />
-                                {
-                                    routes.map(route =>
-                                        <Route key={route.path} path={route.path}>
-                                            <Route index element={route.element}/>
-                                        </Route>
-                                    )
-                                }
-                            <Route path="*" element={<ErrorComponent/>}/>
-                        </Route>
-                        <Route
-                            element={<Authenticated
-                                key="authenticated-outer"
-                                fallback={<Outlet/>}
+                                    <ThemedLayoutV2
+                                        Header={Header}
+                                        Sider={ThemedSiderV2}
+                                        OffLayoutArea={RightSider}
+                                        Title={Title}
+                                    >
+                                        <Outlet/>
+                                    </ThemedLayoutV2>
+                                    <RefineKbar/>
+                                </Authenticated>}
                             >
-                                <NavigateToResource/>
-                            </Authenticated>}
-                        >
+                                    <Route
+                                        index
+                                        element={<Indexer />}
+                                    />
+                                    {
+                                        routes.map(route =>
+                                            <Route key={route.path} path={route.path}>
+                                                <Route index element={route.element}/>
+                                            </Route>
+                                        )
+                                    }
+                                <Route path="*" element={<ErrorComponent/>}/>
+                            </Route>
                             <Route
-                                path="/login"
-                                element={<AuthPage
-                                    type="login"
-                                    title={<ThemedTitleV2
-                                        collapsed={false}
-                                        text={import.meta.env.VITE_APP_NAME}
-                                        icon={<AppIcon/>}
+                                element={<Authenticated
+                                    key="authenticated-outer"
+                                    fallback={<Outlet/>}
+                                >
+                                    <NavigateToResource/>
+                                </Authenticated>}
+                            >
+                                <Route
+                                    path="/login"
+                                    element={<AuthPage
+                                        type="login"
+                                        title={<ThemedTitleV2
+                                            collapsed={false}
+                                            text={import.meta.env.VITE_APP_NAME}
+                                            icon={<AppIcon/>}
+                                        />}
+                                        formProps={{
+                                            defaultValues: {
+                                                email: "", password: "",
+                                            },
+                                        }}
+                                        providers={[{
+                                            name: "google", label: "Sign in with Google", icon: <Google
+                                                style={{
+                                                    fontSize: 18, lineHeight: 0,
+                                                }}
+                                            />
+                                        }, {
+                                            name: "github", label: "Sign in with GitHub", icon: <GitHub
+                                                style={{
+                                                    fontSize: 18, lineHeight: 0,
+                                                }}
+                                            />
+                                        },]}
                                     />}
-                                    formProps={{
-                                        defaultValues: {
-                                            email: "", password: "",
-                                        },
-                                    }}
-                                    providers={[{
-                                        name: "google", label: "Sign in with Google", icon: <Google
-                                            style={{
-                                                fontSize: 18, lineHeight: 0,
-                                            }}
-                                        />
-                                    }, {
-                                        name: "github", label: "Sign in with GitHub", icon: <GitHub
-                                            style={{
-                                                fontSize: 18, lineHeight: 0,
-                                            }}
-                                        />
-                                    },]}
-                                />}
-                            />
-                            <Route
-                                path="/register"
-                                element={<AuthPage type="register"/>}
-                            />
-                            <Route
-                                path="/forgot-password"
-                                element={<AuthPage type="forgotPassword"/>}
-                            />
-                        </Route>
-                    </Routes>
-                    <UnsavedChangesNotifier/>
-                    <DocumentTitleHandler/>
-                </Refine>
-                <DevtoolsPanel/>
-            </DevtoolsProvider>
-        </RefineSnackbarProvider>
-    </ColorModeContextProvider>;
+                                />
+                                <Route
+                                    path="/register"
+                                    element={<AuthPage type="register"/>}
+                                />
+                                <Route
+                                    path="/forgot-password"
+                                    element={<AuthPage type="forgotPassword"/>}
+                                />
+                            </Route>
+                        </Routes>
+                        <UnsavedChangesNotifier/>
+                        <DocumentTitleHandler/>
+                    </Refine>
+                    <DevtoolsPanel/>
+                </DevtoolsProvider>
+            </RefineSnackbarProvider>
+        </ColorModeContextProvider>
+    );
 }
 
 function App() {

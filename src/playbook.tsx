@@ -2,6 +2,7 @@ import {URIAssociation} from "./URIAssociation";
 import React from "react";
 import {Done, EditNote, Folder, TextSnippet, Try} from "@mui/icons-material";
 import Evanotebook from "./applications/evanotebook";
+import {DirectoryCreate, DirectoryList} from "./pages/directories";
 
 export default {
   "name": "Default playbook",
@@ -56,11 +57,11 @@ export default {
       },
       {
         "name": "Directory",
-        "pattern": /directory/,
+        "pattern": /inode\/directory/,
         "meta": {
           "icon": <Folder />
         },
-        "servicePreferenceOrder": ["evanotebook"]
+        "servicePreferenceOrder": ["directory"]
       }
     ])
   },
@@ -82,6 +83,14 @@ export default {
         {
           path: 'evanotebook/:id',
           element: <Evanotebook />
+        },
+        {
+          path: 'directory/:id',
+          element: <DirectoryList/>
+        },
+        {
+          path: 'create',
+          element: <DirectoryCreate/>
         }
       ]
     }

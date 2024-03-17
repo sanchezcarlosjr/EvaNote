@@ -23,11 +23,13 @@ import {
 } from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
 import React from "react";
+import {useGo} from "@refinedev/core";
 
 export function ContextMenu({contextMenu, close}: {
     contextMenu: { mouseX: number; mouseY: number; } | null,
     close: () => void
 }) {
+    const go = useGo();
     return <Menu
         open={contextMenu !== null}
         anchorReference="anchorPosition"
@@ -46,7 +48,13 @@ export function ContextMenu({contextMenu, close}: {
         }}
     >
         <MenuList dense>
-            <MenuItem onClick={close}>
+            <MenuItem onClick={() => {
+                close();
+                go({
+                   to: '/create',
+                   type: "push",
+                });
+            }}>
                 <ListItemText>New</ListItemText>
             </MenuItem>
             <Divider/>

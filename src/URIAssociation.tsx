@@ -25,16 +25,17 @@ export class URIAssociation {
 
     map(resource: ResourceProps & {settings: object|null}) {
         const uri = this.find(resource?.meta?.['content-type'] ?? "");
-        let application = uri?.servicePreferenceOrder[0] ?? "text-editor";
+        let application = uri?.servicePreferenceOrder[0] ?? "evanotebook";
         return {
             name: resource.name,
             meta: {
                 ...resource.meta,
-                label: capitalize(resource.meta?.label ?? ""),
+                label: resource.meta?.label ?? "",
                 icon: uri?.meta?.icon ?? <TextSnippet/>
             },
             list: `/${application}/${resource.name}`,
-            show: `/${application}/${resource.name}`
+            show: `/${application}/${resource.name}`,
+            create: `/create?parent=${resource.name}`,
         };
     }
 

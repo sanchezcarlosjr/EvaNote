@@ -104,7 +104,10 @@ export function PlaybookExecutor() {
     const {data: identity} = useGetIdentity<Identity>();
     const {data} = useList({
         resource: 'resources',
-        liveMode: 'auto'
+        liveMode: 'auto',
+        pagination: {
+            pageSize: 35
+        }
     });
 
     useEffect(() => {

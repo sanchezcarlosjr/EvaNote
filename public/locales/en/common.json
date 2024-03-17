@@ -159,6 +159,8 @@
     }
   },
   "table": {
-    "actions": "Actions"
+    "actions": "Actions",
+    "name": "Name",
+    "label": "Label"
   }
 }
