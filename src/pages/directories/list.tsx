@@ -3,10 +3,8 @@ import {ShowButton, useDataGrid} from "@refinedev/mui";
 import {DataGrid, GridColDef, GridToolbar} from "@mui/x-data-grid";
 import { List } from "@refinedev/mui";
 import React from "react";
-import {useQuery} from "../../utility/useQuery";
 import {CircularProgress} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {Breadcrumb} from "../../components/header/breadcrumb";
 
 export const DirectoryList: React.FC<IResourceComponentsProps> = () => {
     const translate = useTranslate();

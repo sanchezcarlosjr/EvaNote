@@ -43,7 +43,7 @@ export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
                         required: "This field is required",
                     })}
                     error={!!errors.label}
-                    helperText={errors.label?.message}
+                    helperText={errors.label?.message as string}
                     margin="normal"
                     fullWidth
                     label="Label"
