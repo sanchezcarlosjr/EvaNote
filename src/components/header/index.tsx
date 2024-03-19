@@ -1,4 +1,4 @@
-import {Breadcrumbs, IconButton, Link} from "@mui/material";
+import {Breadcrumbs, Grid, IconButton, Link} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
@@ -66,8 +66,16 @@ export const GlobalBreadcrumb = () => {
     const link = useLink();
 
     return <Breadcrumbs aria-label="breadcrumb">
-        {path.map((resource: IResourceItem) => <Link key={resource.name} underline="hover" color="inherit"
+        {path.map((resource: IResourceItem) => <Link   sx={{
+            display: "flex",
+            alignItems: "center",
+            "& .MuiSvgIcon-root": {
+                fontSize: "20px",
+                mr: '0.3em'
+            },
+        }} key={resource.name}  underline="hover" color="inherit"
                                                      component={link} to={resource.list ?? ""}>
+            {resource.meta?.icon}
             {resource.meta?.label}
         </Link>)}
     </Breadcrumbs>
