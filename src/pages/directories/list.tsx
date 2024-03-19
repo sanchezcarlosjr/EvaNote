@@ -68,6 +68,7 @@ export const DirectoryList: React.FC<IResourceComponentsProps> = () => {
     return (
         <List
             title={<Typography variant="h5" gutterBottom>{resource.meta?.label ?? ""}</Typography>}
+            breadcrumb={null}
             canCreate={true}
         >
             <DataGrid
