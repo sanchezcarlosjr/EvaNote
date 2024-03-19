@@ -4,6 +4,9 @@ import {Create} from "@refinedev/mui";
 import {useForm} from "@refinedev/react-hook-form";
 import Typography from "@mui/material/Typography";
 import {useQuery} from "../../utility/useQuery";
+import {useEffect} from "react";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 
 export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
@@ -11,18 +14,25 @@ export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
     const parent = params.get('parent') ?? "";
 
     const {
+        reset,
         refineCore: {formLoading}, saveButtonProps, register, setValue, formState: {errors},
     } = useForm<any, any, any, any>({
         refineCoreProps: {
             resource: "resources", redirect: false, onMutationSuccess: () => {
                 setValue('name', crypto.randomUUID());
             }
-        }, defaultValues: {
-            name: crypto.randomUUID(), meta: {
-                parent, 'content-type': 'nb'
-            }
         }
     });
+
+    useEffect(() => {
+        reset({
+            name: crypto.randomUUID(),
+            meta: {
+                parent,
+                'content-type': 'nb'
+            }
+        });
+    }, [parent]);
 
     const checkKeyDown = (e: any) => {
         if (e.key === 'Enter') saveButtonProps.onClick(e);
@@ -51,14 +61,16 @@ export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
                     autoFocus
                     onKeyDown={(e) => checkKeyDown(e)}
                 />
-                <TextField
+                <Select
                     {...register("meta.content-type")}
-                    margin="normal"
                     fullWidth
                     label="Content Type"
+                    defaultValue={'nb'}
                     name="meta.content-type"
-                    disabled
-                />
+                >
+                    <MenuItem value={'nb'}>EvaNotebook</MenuItem>
+                    <MenuItem value={'inode/directory'}>Directory</MenuItem>
+                </Select>
                 {parent && <TextField
                     {...register("meta.parent")}
                     margin="normal"
