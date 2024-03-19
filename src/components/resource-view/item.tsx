@@ -4,8 +4,10 @@ import Box from '@mui/material/Box';
 
 import {TreeItem, treeItemClasses, TreeItemContentProps, TreeItemProps, useTreeItem} from '@mui/x-tree-view/TreeItem';
 import clsx from "clsx";
-import {Button, IconButton} from "@mui/material";
+import {Button, Fade, IconButton} from "@mui/material";
 import {useLink} from "@refinedev/core";
+import {Add, AddRounded} from "@mui/icons-material";
+import {useState} from "react";
 
 const CustomContent = React.forwardRef(function CustomContent(props: TreeItemContentProps, ref,) {
     const {
@@ -31,6 +33,11 @@ const CustomContent = React.forwardRef(function CustomContent(props: TreeItemCon
         handleSelection(event);
     };
 
+    const [showCreateButton, setShowCreateButton] = useState(false);
+
+    const parts = nodeId.split("/");
+    const parentId = parts.length > 2 ? parts[2] : undefined;
+
     return (// eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <Box
             sx={{
@@ -43,6 +50,8 @@ const CustomContent = React.forwardRef(function CustomContent(props: TreeItemCon
                 [classes.disabled]: disabled,
             })}
             onMouseDown={handleMouseDown}
+            onMouseEnter={() => setShowCreateButton(true)}
+            onMouseLeave={() => setShowCreateButton(false)}
             ref={ref as React.Ref<HTMLDivElement>}
         >
             <IconButton
@@ -60,6 +69,15 @@ const CustomContent = React.forwardRef(function CustomContent(props: TreeItemCon
                 onClick={handleSelectionClick} sx={{fontWeight: 'inherit', flexGrow: 1, textTransform: 'none', justifyContent: "left"}}>
                 {label}
             </Button>
+            <Fade in={showCreateButton}>
+                <IconButton
+                    sx={{p: 0}}
+                    component={Link}
+                    to={`/create?parent=${parentId}`}
+                >
+                    <AddRounded />
+                </IconButton>
+            </Fade>
         </Box>);
 });
 
