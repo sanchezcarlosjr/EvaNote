@@ -82,7 +82,7 @@ function ProvisionedRefine() {
                                         OffLayoutArea={RightSider}
                                         Title={Title}
                                     >
-                                        <CanAccess fallback={<ErrorComponent/>} queryOptions={{cacheTime: 25000}}>
+                                        <CanAccess fallback={<ErrorComponent/>}>
                                             <Outlet/>
                                         </CanAccess>
                                     </ThemedLayoutV2>

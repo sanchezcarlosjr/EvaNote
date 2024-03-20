@@ -1,4 +1,4 @@
-import {ResourceProps} from "@refinedev/core";
+import {IResourceItem, ResourceProps} from "@refinedev/core";
 import {capitalize} from "@mui/material";
 import path from "bfs-path";
 import {TextSnippet} from "@mui/icons-material";
@@ -23,7 +23,7 @@ export class URIAssociation {
         return this.uris[index];
     }
 
-    map(resource: ResourceProps & {settings: object|null}) {
+    map(resource: ResourceProps & {settings: object|null}): IResourceItem {
         const uri = this.find(resource?.meta?.['content-type'] ?? "");
         let application = uri?.servicePreferenceOrder[0] ?? "evanotebook";
         return {
