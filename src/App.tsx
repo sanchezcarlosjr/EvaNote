@@ -23,9 +23,9 @@ import {Title} from "./components/title";
 import {ProvisionContext, ProvisionContextProvider} from "./contexts/provision";
 import React, {useContext} from "react";
 import {PlaybookExecutor} from "./PlaybookExecutor";
-import {RightSider} from "./components/header";
 import {ThemedLayoutV2} from "./components/layout";
 import {accessControlProvider} from "./providers/access-control-provider";
+import {RightSider} from "./components/header/rightSider";
 
 
 const Indexer = React.lazy(() => import("./applications/indexer"));
