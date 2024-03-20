@@ -170,7 +170,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
     const {data: identity} = useGetIdentity<Identity>();
     const {resource} = useResource();
 
-    const name = resource?.meta?.uri ?? resource?.name  ?? "";
+    const name: string = resource?.meta?.uri || resource?.name  || "";
 
 
     const doc = new Doc();

@@ -72,6 +72,16 @@ export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
                     <MenuItem value={'nb'}>EvaNotebook</MenuItem>
                     <MenuItem value={'inode/directory'}>Directory</MenuItem>
                 </Select>
+                <TextField
+                    {...register("meta.uri")}
+                    error={!!errors.label}
+                    helperText={errors.label?.message as string}
+                    margin="normal"
+                    fullWidth
+                    label="URI"
+                    name="meta.uri"
+                    onKeyDown={(e) => checkKeyDown(e)}
+                />
                 {parent && <TextField
                     {...register("meta.parent")}
                     margin="normal"
