@@ -23,19 +23,22 @@ export class URIAssociation {
         return this.uris[index];
     }
 
-    map(resource: ResourceProps & {settings: object|null}): IResourceItem {
+    map(resource: ResourceProps & {parent: string|undefined, access: '*' | 'can_edit' | 'can_input' | 'can_comment' | 'can_view'}): IResourceItem {
         const uri = this.find(resource?.meta?.['content-type'] ?? "");
         let application = uri?.servicePreferenceOrder[0] ?? "evanotebook";
         return {
             name: resource.name,
             meta: {
                 ...resource.meta,
+                parent: resource.parent,
                 label: resource.meta?.label ?? "",
-                icon: uri?.meta?.icon ?? <TextSnippet/>
+                icon: uri?.meta?.icon ?? <TextSnippet/>,
+                canInput: resource.access == '*' || resource.access == 'can_edit' || resource.access == 'can_input'
             },
             list: `/${application}/${resource.name}`,
+            edit:  ((resource.access == '*' || resource.access == 'can_edit' ) || undefined) && `/resources/new?parent=${resource.name}`,
             show: `/${application}/${resource.name}`,
-            create: `/resources/new?parent=${resource.name}`,
+            create: ((resource.access == '*' || resource.access == 'can_edit' ) || undefined) && `/resources/new?parent=${resource.name}`,
         };
     }
 

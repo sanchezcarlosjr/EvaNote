@@ -172,7 +172,6 @@ const Application: React.FC<IResourceComponentsProps> = () => {
 
     const name: string = resource?.meta?.uri || resource?.name  || "";
 
-
     const doc = new Doc();
     const permantentUserData = new PermanentUserData(doc);
 
@@ -196,7 +195,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
 
 
     const editor = useBlockNote({
-        editable: !!collaboration,
+        editable: !!collaboration && !!resource?.edit,
         collaboration,
         blockSpecs: {
             ...defaultBlockSpecs,

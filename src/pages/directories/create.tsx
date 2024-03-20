@@ -27,8 +27,8 @@ export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
     useEffect(() => {
         reset({
             name: crypto.randomUUID(),
+            parent,
             meta: {
-                parent,
                 'content-type': 'nb'
             }
         });
@@ -83,11 +83,11 @@ export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
                     onKeyDown={(e) => checkKeyDown(e)}
                 />
                 {parent && <TextField
-                    {...register("meta.parent")}
+                    {...register("parent")}
                     margin="normal"
                     fullWidth
                     label="Parent"
-                    name="meta.parent"
+                    name="parent"
                     disabled
                 />}
                 <TextField
