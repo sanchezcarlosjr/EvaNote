@@ -41,6 +41,7 @@ export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
     return (<Create
             title={<Typography variant="h5" gutterBottom>Create resource</Typography>}
             isLoading={formLoading}
+            breadcrumb={null}
             saveButtonProps={saveButtonProps}
         >
             <Box

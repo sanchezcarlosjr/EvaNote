@@ -35,7 +35,7 @@ export class URIAssociation {
             },
             list: `/${application}/${resource.name}`,
             show: `/${application}/${resource.name}`,
-            create: `/create?parent=${resource.name}`,
+            create: `/resources/new?parent=${resource.name}`,
         };
     }
 

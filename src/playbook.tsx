@@ -89,7 +89,7 @@ export default {
           element: <DirectoryList/>
         },
         {
-          path: 'create',
+          path: '/resources/new',
           element: <DirectoryCreate/>
         }
       ]

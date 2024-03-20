@@ -3,21 +3,12 @@ import {DevtoolsPanel, DevtoolsProvider} from "@refinedev/devtools";
 import {RefineKbar, RefineKbarProvider} from "@refinedev/kbar";
 import {GitHub, Google} from "@mui/icons-material";
 
-import {
-    AuthPage,
-    ErrorComponent,
-    notificationProvider,
-    RefineSnackbarProvider,
-    ThemedTitleV2,
-} from "@refinedev/mui";
+import {AuthPage, ErrorComponent, notificationProvider, RefineSnackbarProvider, ThemedTitleV2,} from "@refinedev/mui";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import routerBindings, {
-    CatchAllNavigate,
-    DocumentTitleHandler,
-    NavigateToResource,
-    UnsavedChangesNotifier,
+    CatchAllNavigate, DocumentTitleHandler, NavigateToResource, UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 import {dataProvider, liveProvider} from "@refinedev/supabase";
 import {useTranslation} from "react-i18next";
@@ -30,10 +21,11 @@ import {supabaseClient} from "./utility";
 import {ThemedSiderV2} from "./components/layout/sider";
 import {Title} from "./components/title";
 import {ProvisionContext, ProvisionContextProvider} from "./contexts/provision";
-import React, {useContext, useState} from "react";
+import React, {useContext} from "react";
 import {PlaybookExecutor} from "./PlaybookExecutor";
 import {RightSider} from "./components/header";
 import {ThemedLayoutV2} from "./components/layout";
+import {accessControlProvider} from "./providers/access-control-provider";
 
 
 const Indexer = React.lazy(() => import("./applications/indexer"));
@@ -50,8 +42,7 @@ function ProvisionedRefine() {
     };
 
 
-    return (
-        <ColorModeContextProvider>
+    return (<ColorModeContextProvider>
             <CssBaseline/>
             <GlobalStyles styles={{
                 html: {
@@ -67,6 +58,7 @@ function ProvisionedRefine() {
                         authProvider={authProvider}
                         routerProvider={routerBindings}
                         notificationProvider={notificationProvider}
+                        accessControlProvider={accessControlProvider}
                         i18nProvider={i18nProvider}
                         resources={resources}
                         options={{
@@ -77,7 +69,7 @@ function ProvisionedRefine() {
                             projectId: "pjfDKi-64ao4Z-zGOW6b",
                         }}
                     >
-                        <PlaybookExecutor />
+                        <PlaybookExecutor/>
                         <Routes>
                             <Route
                                 element={<Authenticated
@@ -90,22 +82,19 @@ function ProvisionedRefine() {
                                         OffLayoutArea={RightSider}
                                         Title={Title}
                                     >
-                                        <Outlet/>
+                                        <CanAccess fallback={<ErrorComponent/>} queryOptions={{cacheTime: 25000}}>
+                                            <Outlet/>
+                                        </CanAccess>
                                     </ThemedLayoutV2>
                                     <RefineKbar/>
                                 </Authenticated>}
                             >
-                                    <Route
-                                        index
-                                        element={<Indexer />}
-                                    />
-                                    {
-                                        routes.map(route =>
-                                            <Route key={route.path} path={route.path}>
-                                                <Route index element={route.element}/>
-                                            </Route>
-                                        )
-                                    }
+                                <Route
+                                    index
+                                    element={<Indexer/>}
+                                />
+                                {routes.map(route => <Route key={route.path} path={route.path}
+                                                            element={route.element}/>)}
                                 <Route path="*" element={<ErrorComponent/>}/>
                             </Route>
                             <Route
@@ -161,15 +150,14 @@ function ProvisionedRefine() {
                     <DevtoolsPanel/>
                 </DevtoolsProvider>
             </RefineSnackbarProvider>
-        </ColorModeContextProvider>
-    );
+        </ColorModeContextProvider>);
 }
 
 function App() {
     return (<BrowserRouter>
         <RefineKbarProvider options={{enableHistory: true}}>
             <ProvisionContextProvider>
-                <ProvisionedRefine />
+                <ProvisionedRefine/>
             </ProvisionContextProvider>
         </RefineKbarProvider>
     </BrowserRouter>);

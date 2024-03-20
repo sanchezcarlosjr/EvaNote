@@ -118,8 +118,13 @@ export function PlaybookExecutor() {
 
     useEffect(() => {
         if (!identity) return;
+        const resources = data?.data?.map((resource: any) => context.playbook.settings.uriAssociation.map(resource)) ?? [];
+        resources.push({
+            name: 'resources',
+            create: '/resources/new'
+        });
         context.setResources(
-            data?.data?.map((resource: any) => context.playbook.settings.uriAssociation.map(resource)) ?? []
+            resources
         )
     }, [identity, data?.data]);
 

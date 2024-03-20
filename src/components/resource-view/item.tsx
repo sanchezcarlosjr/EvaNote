@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import {TreeItem, treeItemClasses, TreeItemContentProps, TreeItemProps, useTreeItem} from '@mui/x-tree-view/TreeItem';
 import clsx from "clsx";
 import {Button, Fade, IconButton} from "@mui/material";
-import {useLink} from "@refinedev/core";
+import {useCan, useLink} from "@refinedev/core";
 import {Add, AddRounded} from "@mui/icons-material";
 import {useState} from "react";
 
@@ -34,6 +34,10 @@ const CustomContent = React.forwardRef(function CustomContent(props: TreeItemCon
     };
 
     const [showCreateButton, setShowCreateButton] = useState(false);
+    const {data} = useCan({
+        action: 'create',
+        resource: 'resources'
+    });
 
     const parts = nodeId.split("/");
     const parentId = parts.length > 2 ? parts[2] : undefined;
@@ -69,15 +73,17 @@ const CustomContent = React.forwardRef(function CustomContent(props: TreeItemCon
                 onClick={handleSelectionClick} sx={{fontWeight: 'inherit', flexGrow: 1, textTransform: 'none', justifyContent: "left"}}>
                 {label}
             </Button>
-            <Fade in={showCreateButton}>
-                <IconButton
-                    sx={{p: 0}}
-                    component={Link}
-                    to={`/create?parent=${parentId}`}
-                >
-                    <AddRounded />
-                </IconButton>
-            </Fade>
+            {
+                data?.can && <Fade in={showCreateButton}>
+                    <IconButton
+                        sx={{p: 0}}
+                        component={Link}
+                        to={`/resources/new?parent=${parentId}`}
+                    >
+                        <AddRounded />
+                    </IconButton>
+                </Fade>
+            }
         </Box>);
 });
 
