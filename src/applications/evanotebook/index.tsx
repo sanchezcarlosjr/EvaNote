@@ -69,6 +69,7 @@ const codeblock = createReactBlockSpec({
                 }}
                 extensions={[Prec.highest(keymap.of([{
                     key: "Mod-Enter", run: (command) => {
+                        write("");
                         open?.({
                             type: "progress", message: "We've begun executing your code.", description: "Loading...",
                         });
@@ -76,12 +77,12 @@ const codeblock = createReactBlockSpec({
                             pyodide.setStdin({stdin: () => prompt()});
                             pyodide.setStderr({stdin: (output: React.SetStateAction<string>) => write(output)});
                             pyodide.setStdout({
-                                batched: (input: string) => {
-                                    write(input);
+                                raw: (charcode: number) => {
+                                    write(state=> state+String.fromCharCode(charcode));
                                 }
                             });
                             return pyodide.runPythonAsync(command.state.doc.toString());
-                        }).then(x => write(x)).catch(output => write(output.message));
+                        }).then(stdout => write(state=> state+(stdout ?? ""))).catch(output => write(output.message));
                         return true;
                     }
                 }])), python(), color, hyperLink]}
