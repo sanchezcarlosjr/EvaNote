@@ -15,7 +15,7 @@ export const DirectoryList: React.FC<IResourceComponentsProps> = () => {
         filters: {
             permanent: [
                 {
-                    field: "meta->>parent",
+                    field: "parent",
                     operator: "eq",
                     value: resource?.name ?? ""
                 },
