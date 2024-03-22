@@ -136,7 +136,7 @@ export const Header = () => {
                     alignItems="center"
                     id="header-flex-end"
                 >
-                    {toolbarWidgets.map((toolbarWidget, index) => <MenuItem key={`${index}-${toolbarWidget.label}`}
+                    {toolbarWidgets.map((toolbarWidget, index) => <MenuItem key={toolbarWidget.label}
                                                                             onClick={() => {
                                                                                 setRightSiderWidget(toolbarWidget.component)
                                                                             }}
