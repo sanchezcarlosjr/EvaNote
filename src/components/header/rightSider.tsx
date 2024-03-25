@@ -19,14 +19,27 @@ export const RightSider = () => {
         setRightSiderWidget("");
     }
 
+    const gradioApp = document.querySelector("gradio-app");
+    gradioApp?.setAttribute('theme_mode', mode);
+    gradioApp?.setAttribute('class', mode);
+
     useEffect(() => {
         if (!rightSiderWidget) return;
         setDrawerWidth('30vw');
-        for (const child of ref.current?.children ?? []) {
-            child.setAttribute('theme_mode', mode);
-            child.setAttribute('class', mode);
+
+        const gradioApp = document.querySelector("gradio-app");
+
+        function handleLoadComplete() {
+            gradioApp?.setAttribute('theme_mode', mode);
+            gradioApp?.setAttribute('class', mode);
         }
-    }, [rightSiderWidget, mode]);
+
+        handleLoadComplete();
+
+        gradioApp?.addEventListener("render", handleLoadComplete);
+        return () => gradioApp?.removeEventListener("render", handleLoadComplete);
+    }, [rightSiderWidget]);
+
 
     return <Drawer
         variant="permanent"
@@ -34,8 +47,8 @@ export const RightSider = () => {
         sx={{
             width: drawerWidth, flexShrink: 0, "& .MuiDrawer-paper": {
                 width: drawerWidth,
-                'overflow-y': "auto",
-                'overflow-x': "hidden",
+                overflowY: "auto",
+                overflowX: "hidden",
                 zIndex: 0,
                 transition: "width 200ms cubic-bezier(0.4, 0, 0.6, 1) 0ms",
             }
