@@ -7,8 +7,12 @@ Web-based reactive computing platform
 ### Environment and settings
 ```.env.*.example``` files shows how you should write ```.env.*.local``` files. The latter are ignored by Git. Similarly, ```public/settings/service_registries.*``` files and ```public/settings/settings.*```  files allow you to define different settings and service registries by environment. These files are loaded at execution time using a template engine and Browser JSON Parser.
 
-
 ## Available Scripts
+
+## Clone
+```
+git submodule update --init --recursive
+```
 
 ### Running the development server.
 
