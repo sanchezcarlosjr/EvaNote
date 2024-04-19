@@ -10,7 +10,7 @@ i18n
   .init({
     supportedLngs: ["en", "de"],
     backend: {
-      loadPath: "/locales/{{lng}}/{{ns}}.json",
+      loadPath: import.meta.env.BASE_URL+"/locales/{{lng}}/{{ns}}.json",
     },
     ns: ["common"],
     defaultNS: "common",

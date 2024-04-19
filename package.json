@@ -1,16 +1,15 @@
 {
   "name": "@evanote/workspace",
-  "version": "1.1.0",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@blocknote/core": "0.11.2",
-    "@blocknote/react": "0.11.2",
+    "@blocknote/core": "0.12.4",
+    "@blocknote/react": "0.12.4",
     "@codemirror/lang-javascript": "6.2.1",
     "@codemirror/lang-python": "6.1.4",
     "@emotion/react": "11.11.3",
     "@emotion/styled": "11.11.0",
-    "@evanote/template-engine": "1.0.0",
     "@mui/icons-material": "5.15.7",
     "@mui/lab": "5.0.0-alpha.163",
     "@mui/material": "5.15.7",
@@ -76,7 +75,7 @@
   },
   "scripts": {
     "dev": "refine dev --port 3001",
-    "build": "tsc && refine build --base=https://note.sanchezcarlosjr.com/",
+    "build": "tsc && refine build --base=/app/",
     "preview": "refine start",
     "refine": "refine",
     "test": "vitest --ui --config ./vite.config.test.ts",

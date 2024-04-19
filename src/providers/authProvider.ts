@@ -11,7 +11,7 @@ const authProvider: AuthBindings = {
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
           provider: providerName,
           options: {
-            redirectTo: import.meta.env.BASE_URL
+            redirectTo: import.meta.env.VITE_AUTH_URL
           }
         });
 

@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "dist",
-    "site": "evanote",
+    "site": "evanote2",
     "ignore": [
       "firebase.json",
       "**/.*",

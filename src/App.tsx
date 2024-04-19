@@ -136,7 +136,26 @@ function ProvisionedRefine() {
                                 />
                                 <Route
                                     path="/register"
-                                    element={<AuthPage type="register"/>}
+                                    element={<AuthPage
+                                        title={<ThemedTitleV2
+                                            collapsed={false}
+                                            text={import.meta.env.VITE_APP_NAME}
+                                            icon={<AppIcon/>}
+                                        />}
+                                        providers={[{
+                                            name: "google", label: "Sign in with Google", icon: <Google
+                                                style={{
+                                                    fontSize: 18, lineHeight: 0,
+                                                }}
+                                            />
+                                        }, {
+                                            name: "github", label: "Sign in with GitHub", icon: <GitHub
+                                                style={{
+                                                    fontSize: 18, lineHeight: 0,
+                                                }}
+                                            />
+                                        },]}
+                                        type="register"/>}
                                 />
                                 <Route
                                     path="/forgot-password"
