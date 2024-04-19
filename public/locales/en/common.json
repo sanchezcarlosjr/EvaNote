@@ -144,18 +144,18 @@
     "suffix": " | EvaNote",
     "auth": "EvaNote",
     "blog_posts": {
-      "list": "Blog Posts | refine",
-      "show": "#{{id}} Show Blog Post | refine",
-      "edit": "#{{id}} Edit Blog Post | refine",
-      "create": "Create new Blog Post | refine",
-      "clone": "#{{id}} Clone Blog Post | refine"
+      "list": "Blog Posts | EvaNote",
+      "show": "#{{id}} Show Blog Post | EvaNote",
+      "edit": "#{{id}} Edit Blog Post | EvaNote",
+      "create": "Create new Blog Post | EvaNote",
+      "clone": "#{{id}} Clone Blog Post | EvaNote"
     },
     "categories": {
-      "list": "Categories | refine",
-      "show": "#{{id}} Show Category | refine",
-      "edit": "#{{id}} Edit Category | refine",
-      "create": "Create new Category | refine",
-      "clone": "#{{id}} Clone Category | refine"
+      "list": "Categories | EvaNote",
+      "show": "#{{id}} Show Category | EvaNote",
+      "edit": "#{{id}} Edit Category | EvaNote",
+      "create": "Create new Category | EvaNote",
+      "clone": "#{{id}} Clone Category | EvaNote"
     }
   },
   "table": {

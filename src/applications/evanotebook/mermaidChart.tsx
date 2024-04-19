@@ -8,11 +8,9 @@ import {hyperLink} from "@uiw/codemirror-extensions-hyper-link";
 import {materialDark, materialLight} from "@uiw/codemirror-theme-material";
 
 mermaid.initialize({
-    startOnLoad: false, securityLevel: 'loose', theme: 'forest',
-});
-
-mermaid.run({
-    suppressErrors: true,
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: 'forest'
 });
 
 const MermaidChart = ({chart}: { chart: string }) => {

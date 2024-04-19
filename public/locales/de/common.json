@@ -143,18 +143,18 @@
     "default": "EvaNote",
     "suffix": " | EvaNote",
     "blog_posts": {
-      "list": "Blogbeiträge | refine",
-      "show": "#{{id}} Show Blogeintrag | refine",
-      "edit": "#{{id}} Edit Blogeintrag | refine",
-      "create": "Create new Blogeintrag | refine",
-      "clone": "#{{id}} Clone Blogeintrag | refine"
+      "list": "Blogbeiträge | EvaNote",
+      "show": "#{{id}} Show Blogeintrag | EvaNote",
+      "edit": "#{{id}} Edit Blogeintrag | EvaNote",
+      "create": "Create new Blogeintrag | EvaNote",
+      "clone": "#{{id}} Clone Blogeintrag | EvaNote"
     },
     "categories": {
-      "list": "Kategorien | refine",
-      "show": "#{{id}} Zeigen Kategorien | refine",
-      "edit": "#{{id}} Bearbeiten Kategorien | refine",
-      "create": "Neue Kategorie Erstellen | refine",
-      "clone": "#{{id}} Klon Kategorie | refine"
+      "list": "Kategorien | EvaNote",
+      "show": "#{{id}} Zeigen Kategorien | EvaNote",
+      "edit": "#{{id}} Bearbeiten Kategorien | EvaNote",
+      "create": "Neue Kategorie Erstellen | EvaNote",
+      "clone": "#{{id}} Klon Kategorie | EvaNote"
     }
   },
   "table": {

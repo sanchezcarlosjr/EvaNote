@@ -135,7 +135,7 @@ export const Title = ({collapsed = true,}) => {
                                             height: "24px",
                                             marginRight: "5px",
                                         }}
-                                        src={`${import.meta.env.BASE_URL}/images/flags/${lang}.svg`}
+                                        src={`${import.meta.env.VITE_BASE_URL}/images/flags/${lang}.svg`}
                                     />
                                     <Typography>
                                         {lang === "en" ? "English" : "German"}
