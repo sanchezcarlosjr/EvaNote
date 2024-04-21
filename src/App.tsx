@@ -47,7 +47,19 @@ function ProvisionedRefine() {
             <GlobalStyles styles={{
                 html: {
                     WebkitFontSmoothing: "auto",
-                    '* :not(.katex-html span)': {fontFamily: playbook.settings.theme.fontFamily}
+                    '* :not(.katex-html span)': {
+                        fontFamily: playbook.settings.theme.fontFamily,
+                        fontFeatureSettings: `"cv12", "cv06", "ss03", "ss02", "ss03"`
+                    }
+                },
+                "::selection": {
+                    background: "rgba(35, 131, 226, .28)"
+                },
+                ".bn-container[data-color-scheme=dark]": {
+                   "--bn-colors-editor-background": "#121212"
+                },
+                ".cm-editor.cm-focused": {
+                    "outline": "none !important"
                 }
             }}/>
             <RefineSnackbarProvider>

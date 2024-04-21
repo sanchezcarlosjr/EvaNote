@@ -1,14 +1,19 @@
 import {createReactBlockSpec} from "@blocknote/react";
-import React, {useContext, useState} from "react";
+import React, {useCallback, useContext, useImperativeHandle, useRef, useState} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
 import Box from "@mui/material/Box";
 import CodeMirror, {keymap, Prec} from "@uiw/react-codemirror";
-import {python} from "@codemirror/lang-python";
+import {globalCompletion, python} from "@codemirror/lang-python";
 import {color} from "@uiw/codemirror-extensions-color";
 import {hyperLink} from "@uiw/codemirror-extensions-hyper-link";
 import {materialDark, materialLight} from "@uiw/codemirror-theme-material";
 import {CircularProgress, IconButton, Tooltip} from "@mui/material";
 import {PlayCircle} from "@mui/icons-material";
+import { autocompletion, startCompletion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
+import {calendarPickerClasses} from "@mui/lab";
+import {formatKeyboardShortcut} from "@blocknote/core";
+import {useCodeMirror} from "@uiw/react-codemirror/src/useCodeMirror";
+
 
 let pyodide: any = null;
 
@@ -17,6 +22,18 @@ async function importPyodide() {
     // @ts-ignore
     pyodide = await window.loadPyodide();
     return pyodide;
+}
+
+function customAutocompleter(context: CompletionContext): CompletionResult | null {
+    const word = context.matchBefore(/\w*/)
+    if (!word || word.from == word.to && !context.explicit)
+        return null
+    return {
+        from: word.from,
+        options: [
+            {label: `print(f"")`, type: "print", apply: `print(f"")`, info: "template print", boost: 1}
+        ]
+    }
 }
 
 export const codeblock = createReactBlockSpec({

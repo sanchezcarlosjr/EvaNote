@@ -1,12 +1,22 @@
 import {IResourceComponentsProps, useGetIdentity, useResource} from "@refinedev/core";
 import {
+    BasicTextStyleButton,
     BlockNoteView,
+    BlockTypeSelect,
+    ColorStyleButton,
+    CreateLinkButton,
     DefaultReactSuggestionItem,
+    FormattingToolbar,
+    FormattingToolbarController,
     getDefaultReactSlashMenuItems,
-    SuggestionMenuController
+    ImageCaptionButton,
+    NestBlockButton,
+    ReplaceImageButton,
+    SuggestionMenuController,
+    TextAlignButton,
+    UnnestBlockButton
 } from "@blocknote/react";
 import "@blocknote/react/style.css";
-import './styles.css';
 import React, {useContext, useMemo} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
 import {Doc, PermanentUserData} from "yjs";
@@ -16,16 +26,13 @@ import {CircularProgress} from "@mui/material";
 import {MathExtension} from "tiptap-math-extension";
 import "katex/dist/katex.min.css";
 import {
-    BlockNoteEditor,
-    BlockNoteSchema,
-    defaultBlockSpecs,
-    filterSuggestionItems,
-    insertOrUpdateBlock
+    BlockNoteEditor, BlockNoteSchema, defaultBlockSpecs, filterSuggestionItems, insertOrUpdateBlock
 } from "@blocknote/core";
 import {Code} from '@mui/icons-material';
 import {Identity} from "../../providers/identity";
-import {codeblock} from "./output";
+import {codeblock} from "./codeBlock";
 import {mermaidblock} from "./mermaidChart";
+import {AIButton} from "./AIButton";
 
 const schema = BlockNoteSchema.create({
     blockSpecs: {
@@ -34,25 +41,34 @@ const schema = BlockNoteSchema.create({
 });
 
 const insertCode = (editor: typeof schema.BlockNoteEditor) => ({
-    title: "Code block", onItemClick: () => {
+    title: "Code block",
+    onItemClick: () => {
         insertOrUpdateBlock(editor, {
             type: "codeblock",
         });
-    }, hint: "Add a live code block", aliases: ["code", "python", "c++"], group: "Code", icon: <Code/>
+    },
+    subtext: "Add a live code block",
+    aliases: ["code", "python", "c++"],
+    group: "Code",
+    icon: <Code fontSize={"small"}/>
 });
 
 const insertMermaid = (editor: typeof schema.BlockNoteEditor) => ({
-    title: "Mermaid", onItemClick: () => {
+    title: "Mermaid",
+    onItemClick: () => {
         insertOrUpdateBlock(editor, {
             type: "mermaidblock",
         });
-    }, hint: "Add a Mermaid code block", aliases: ["code", "mermaid"], group: "Code", icon: <Code/>
+    },
+    subtext: "Add a Mermaid code block",
+    aliases: ["code", "mermaid"],
+    group: "Code",
+    icon: <Code fontSize={"small"}/>
 });
 
 
 // List containing all default Slash Menu Items, as well as our custom one.
 const getCustomSlashMenuItems = (editor: typeof schema.BlockNoteEditor): DefaultReactSuggestionItem[] => [...getDefaultReactSlashMenuItems(editor), insertMermaid(editor), insertCode(editor)];
-
 
 const Application: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
@@ -61,7 +77,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
 
     const name: string = resource?.meta?.uri || resource?.name || "";
 
-    const editor: typeof schema.BlockNoteEditor  = useMemo(() => {
+    const editor: typeof schema.BlockNoteEditor = useMemo(() => {
         const doc = new Doc();
         const permantentUserData = new PermanentUserData(doc);
         new IndexeddbPersistence(name, doc);
@@ -83,11 +99,63 @@ const Application: React.FC<IResourceComponentsProps> = () => {
 
     return <BlockNoteView
         editable={editor && !!resource?.edit}
-        theme={mode as 'light' | 'dark'} editor={editor} slashMenu={false}>
+        theme={mode as 'light' | 'dark'} editor={editor} slashMenu={false} formattingToolbar={false}>
         <SuggestionMenuController
             triggerCharacter={"/"}
             // Replaces the default Slash Menu items with our custom ones.
             getItems={async (query) => filterSuggestionItems(getCustomSlashMenuItems(editor), query)}
+        />
+        <FormattingToolbarController
+            formattingToolbar={() => (<FormattingToolbar>
+                    <AIButton key={"aiButton"}/>
+
+                    <BlockTypeSelect key={"blockTypeSelect"}/>
+
+                    <ImageCaptionButton key={"imageCaptionButton"}/>
+                    <ReplaceImageButton key={"replaceImageButton"}/>
+
+                    <BasicTextStyleButton
+                        basicTextStyle={"bold"}
+                        key={"boldStyleButton"}
+                    />
+                    <BasicTextStyleButton
+                        basicTextStyle={"italic"}
+                        key={"italicStyleButton"}
+                    />
+                    <BasicTextStyleButton
+                        basicTextStyle={"underline"}
+                        key={"underlineStyleButton"}
+                    />
+                    <BasicTextStyleButton
+                        basicTextStyle={"strike"}
+                        key={"strikeStyleButton"}
+                    />
+                    {/* Extra button to toggle code styles */}
+                    <BasicTextStyleButton
+                        key={"codeStyleButton"}
+                        basicTextStyle={"code"}
+                    />
+
+                    <TextAlignButton
+                        textAlignment={"left"}
+                        key={"textAlignLeftButton"}
+                    />
+                    <TextAlignButton
+                        textAlignment={"center"}
+                        key={"textAlignCenterButton"}
+                    />
+                    <TextAlignButton
+                        textAlignment={"right"}
+                        key={"textAlignRightButton"}
+                    />
+
+                    <ColorStyleButton key={"colorStyleButton"}/>
+
+                    <NestBlockButton key={"nestBlockButton"}/>
+                    <UnnestBlockButton key={"unnestBlockButton"}/>
+
+                    <CreateLinkButton key={"createLinkButton"}/>
+                </FormattingToolbar>)}
         />
     </BlockNoteView>;
 };
