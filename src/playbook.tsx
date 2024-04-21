@@ -3,6 +3,7 @@ import React from "react";
 import {Done, EditNote, Folder, TextSnippet, Try} from "@mui/icons-material";
 import Evanotebook from "./applications/evanotebook";
 import {DirectoryCreate, DirectoryList} from "./pages/directories";
+import './App.css';
 
 export default {
   "name": "Default playbook",

@@ -14,7 +14,7 @@ export function makeid(length: number) {
 export class Buffer {
     constructor(
         private buffer: Event[] = [],
-        private callback: EventListenerOrEventListenerObject | null = null
+        private callback: EventListener | null = null
     ) {}
     next(event: Event): boolean {
         this.buffer.push(event);
@@ -23,7 +23,7 @@ export class Buffer {
         }
         return true;
     }
-    subscribe(callback: EventListenerOrEventListenerObject | null) {
+    subscribe(callback: EventListener | null) {
         this.callback = callback;
         if (this.callback && this.buffer.length > 0) {
             this.callback(this.buffer[this.buffer.length-1]);
@@ -67,5 +67,9 @@ const handler = {
     }
 };
 
-export default new Proxy(new RemoteProcedureCaller(), handler);
+export interface RemoteProcedureCalls {
+    ai_explain: (prompt: string) => Promise<void>
+}
+
+export default new Proxy(new RemoteProcedureCaller(), handler) as unknown as RemoteProcedureCalls;
 

@@ -28,7 +28,7 @@ import "katex/dist/katex.min.css";
 import {
     BlockNoteEditor, BlockNoteSchema, defaultBlockSpecs, filterSuggestionItems, insertOrUpdateBlock
 } from "@blocknote/core";
-import {Code} from '@mui/icons-material';
+import {Code, FormatListNumbered, QuestionMarkOutlined} from '@mui/icons-material';
 import {Identity} from "../../providers/identity";
 import {codeblock} from "./codeBlock";
 import {mermaidblock} from "./mermaidChart";
@@ -107,55 +107,62 @@ const Application: React.FC<IResourceComponentsProps> = () => {
         />
         <FormattingToolbarController
             formattingToolbar={() => (<FormattingToolbar>
-                    <AIButton key={"aiButton"}/>
+                <AIButton mainTooltip={'Explain this'} shortcut={'Mod+J'}
+                          userPrompt={'Explicame lo que sigue: {{selection}}'}>
+                    <QuestionMarkOutlined fontSize={"small"}/>
+                </AIButton>
+                <AIButton mainTooltip={'Exmples'} shortcut={'Mod+Q'}
+                          userPrompt={'Dame ejemplos claros y distintos tal que sean suficientes para realizar pruebas significativas: {{selection}}'}>
+                    <FormatListNumbered fontSize={"small"}/>
+                </AIButton>
 
-                    <BlockTypeSelect key={"blockTypeSelect"}/>
+                <BlockTypeSelect key={"blockTypeSelect"}/>
 
-                    <ImageCaptionButton key={"imageCaptionButton"}/>
-                    <ReplaceImageButton key={"replaceImageButton"}/>
+                <ImageCaptionButton key={"imageCaptionButton"}/>
+                <ReplaceImageButton key={"replaceImageButton"}/>
 
-                    <BasicTextStyleButton
-                        basicTextStyle={"bold"}
-                        key={"boldStyleButton"}
-                    />
-                    <BasicTextStyleButton
-                        basicTextStyle={"italic"}
-                        key={"italicStyleButton"}
-                    />
-                    <BasicTextStyleButton
-                        basicTextStyle={"underline"}
-                        key={"underlineStyleButton"}
-                    />
-                    <BasicTextStyleButton
-                        basicTextStyle={"strike"}
-                        key={"strikeStyleButton"}
-                    />
-                    {/* Extra button to toggle code styles */}
-                    <BasicTextStyleButton
-                        key={"codeStyleButton"}
-                        basicTextStyle={"code"}
-                    />
+                <BasicTextStyleButton
+                    basicTextStyle={"bold"}
+                    key={"boldStyleButton"}
+                />
+                <BasicTextStyleButton
+                    basicTextStyle={"italic"}
+                    key={"italicStyleButton"}
+                />
+                <BasicTextStyleButton
+                    basicTextStyle={"underline"}
+                    key={"underlineStyleButton"}
+                />
+                <BasicTextStyleButton
+                    basicTextStyle={"strike"}
+                    key={"strikeStyleButton"}
+                />
+                {/* Extra button to toggle code styles */}
+                <BasicTextStyleButton
+                    key={"codeStyleButton"}
+                    basicTextStyle={"code"}
+                />
 
-                    <TextAlignButton
-                        textAlignment={"left"}
-                        key={"textAlignLeftButton"}
-                    />
-                    <TextAlignButton
-                        textAlignment={"center"}
-                        key={"textAlignCenterButton"}
-                    />
-                    <TextAlignButton
-                        textAlignment={"right"}
-                        key={"textAlignRightButton"}
-                    />
+                <TextAlignButton
+                    textAlignment={"left"}
+                    key={"textAlignLeftButton"}
+                />
+                <TextAlignButton
+                    textAlignment={"center"}
+                    key={"textAlignCenterButton"}
+                />
+                <TextAlignButton
+                    textAlignment={"right"}
+                    key={"textAlignRightButton"}
+                />
 
-                    <ColorStyleButton key={"colorStyleButton"}/>
+                <ColorStyleButton key={"colorStyleButton"}/>
 
-                    <NestBlockButton key={"nestBlockButton"}/>
-                    <UnnestBlockButton key={"unnestBlockButton"}/>
+                <NestBlockButton key={"nestBlockButton"}/>
+                <UnnestBlockButton key={"unnestBlockButton"}/>
 
-                    <CreateLinkButton key={"createLinkButton"}/>
-                </FormattingToolbar>)}
+                <CreateLinkButton key={"createLinkButton"}/>
+            </FormattingToolbar>)}
         />
     </BlockNoteView>;
 };

@@ -1,6 +1,6 @@
 {
   "name": "@evanote/workspace",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": true,
   "type": "module",
   "dependencies": {
@@ -32,6 +32,7 @@
     "@uiw/react-codemirror": "4.21.21",
     "@xstate/react": "4.0.3",
     "browserfs": "2.0.0",
+    "handlebars": "^4.7.8",
     "i18next": "20.6.1",
     "i18next-browser-languagedetector": "6.1.8",
     "i18next-xhr-backend": "3.2.2",

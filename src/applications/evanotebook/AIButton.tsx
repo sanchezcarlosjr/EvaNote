@@ -3,13 +3,22 @@ import {formatKeyboardShortcut} from "@blocknote/core";
 import {QuestionMarkOutlined} from "@mui/icons-material";
 import remoteProcedureCaller from "../../events/remoteProcedureCaller";
 import {useNotification} from "@refinedev/core";
+import Handlebars from "handlebars";
+import {ReactElement} from "react";
 
-export function AIButton() {
+export interface AIButtonProps {
+    mainTooltip: string;
+    userPrompt: string;
+    shortcut: string;
+    children: string | ReactElement
+}
+
+export function AIButton({mainTooltip, shortcut, userPrompt, children}: AIButtonProps) {
     const {open} = useNotification();
-
     const onClick = async () => {
         try {
-            await remoteProcedureCaller.ai_explain(`Explicame lo que sigue: ${document.getSelection()?.toString() ?? ""}`);
+            const template = Handlebars.compile(userPrompt);
+            await remoteProcedureCaller.ai_explain(template({selection: document.getSelection()?.toString() ?? ""}));
         } catch (e) {
             open?.({
                 type: 'error',
@@ -21,9 +30,9 @@ export function AIButton() {
 
     return (<ToolbarButton
             onClick={onClick}
-            mainTooltip={"Explain this"}
-            secondaryTooltip={formatKeyboardShortcut("Mod+J")}
+            mainTooltip={mainTooltip}
+            secondaryTooltip={formatKeyboardShortcut(shortcut)}
         >
-            <QuestionMarkOutlined fontSize={"small"}/>
+           {children}
         </ToolbarButton>);
 }

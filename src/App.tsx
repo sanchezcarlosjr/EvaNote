@@ -47,9 +47,10 @@ function ProvisionedRefine() {
             <GlobalStyles styles={{
                 html: {
                     WebkitFontSmoothing: "auto",
-                    '* :not(.katex-html span)': {
+                    'body :not(.katex-html span)': {
                         fontFamily: playbook.settings.theme.fontFamily,
-                        fontFeatureSettings: `"cv12", "cv06", "ss03", "ss02", "ss03"`
+                        fontFeatureSettings: `"cv12", "cv06", "ss03", "ss02", "ss03"`,
+                        fontVariant: "common-ligatures;"
                     }
                 },
                 "::selection": {
@@ -57,6 +58,12 @@ function ProvisionedRefine() {
                 },
                 ".bn-container[data-color-scheme=dark]": {
                    "--bn-colors-editor-background": "#121212"
+                },
+                ".bn-container .cm-editor *": {
+                    fontFamily: '"Fira Code" !important',
+                    fontFeatureSettings: `"cv12", "cv06", "ss03", "ss02", "ss03"`,
+                    fontVariant: "common-ligatures;",
+                    letterSpacing: 0
                 },
                 ".cm-editor.cm-focused": {
                     "outline": "none !important"

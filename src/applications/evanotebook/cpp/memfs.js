@@ -2,7 +2,7 @@ import { AbortError } from './errors.js'
 import { Memory } from './memory'
 import { assert, ESUCCESS, getImportObject } from './shared'
 
-const memfsUrl = '/clang/memfs.wasm';
+const memfsUrl = import.meta.env.BASE_URL+'/clang/memfs.wasm';
 
 export class MemFS {
   constructor(options) {

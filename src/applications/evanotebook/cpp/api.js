@@ -3,9 +3,9 @@ import { MemFS } from './memfs'
 import { msToSec } from './shared'
 import { Tar } from './tar'
 
-const clangUrl = '/clang/clang.wasm';
-const lldUrl = '/clang/lld.wasm';
-const sysrootUrl = '/clang/sysroot.tar';
+const clangUrl = import.meta.env.BASE_URL+'/clang/clang.wasm';
+const lldUrl =import.meta.env.BASE_URL+ '/clang/lld.wasm';
+const sysrootUrl = import.meta.env.BASE_URL+'/clang/sysroot.tar';
 
 export class API {
   constructor(options) {
