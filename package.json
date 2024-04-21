@@ -6,6 +6,7 @@
   "dependencies": {
     "@blocknote/core": "0.12.4",
     "@blocknote/react": "0.12.4",
+    "@codemirror/lang-cpp": "^6.0.2",
     "@codemirror/lang-javascript": "6.2.1",
     "@codemirror/lang-python": "6.1.4",
     "@emotion/react": "11.11.3",

@@ -1,40 +1,49 @@
 import {createReactBlockSpec} from "@blocknote/react";
-import React, {useCallback, useContext, useImperativeHandle, useRef, useState} from "react";
+import React, {useContext, useMemo, useState} from "react";
 import {ColorModeContext} from "../../contexts/color-mode";
 import Box from "@mui/material/Box";
 import CodeMirror, {keymap, Prec} from "@uiw/react-codemirror";
-import {globalCompletion, python} from "@codemirror/lang-python";
+import {python} from "@codemirror/lang-python";
 import {color} from "@uiw/codemirror-extensions-color";
 import {hyperLink} from "@uiw/codemirror-extensions-hyper-link";
 import {materialDark, materialLight} from "@uiw/codemirror-theme-material";
 import {CircularProgress, IconButton, Tooltip} from "@mui/material";
 import {PlayCircle} from "@mui/icons-material";
-import { autocompletion, startCompletion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
-import {calendarPickerClasses} from "@mui/lab";
-import {formatKeyboardShortcut} from "@blocknote/core";
-import {useCodeMirror} from "@uiw/react-codemirror/src/useCodeMirror";
+import {autocompletion, CompletionContext, CompletionResult} from "@codemirror/autocomplete"
 
+// @ts-ignore
+import {API} from './cpp/api';
+import {cpp} from "@codemirror/lang-cpp";
 
-let pyodide: any = null;
-
-async function importPyodide() {
-    if (pyodide) return pyodide;
-    // @ts-ignore
-    pyodide = await window.loadPyodide();
-    return pyodide;
-}
-
-function customAutocompleter(context: CompletionContext): CompletionResult | null {
-    const word = context.matchBefore(/\w*/)
+function autocompleteCpp(context: CompletionContext): CompletionResult | null {
+    let word = context.matchBefore(/\w*/)
     if (!word || word.from == word.to && !context.explicit)
         return null
     return {
         from: word.from,
         options: [
-            {label: `print(f"")`, type: "print", apply: `print(f"")`, info: "template print", boost: 1}
+            {label: "include", type: "include", apply: "#include", detail: "include library"},
+            {label: "stdio.h", type: "include", apply: "#include <stdio.h>", detail: "include library"},
+            {label: "function", type: "function", apply: `int f() {
+      return 0;
+      }`, detail: "function"},
+            {label: "int", type: "function", apply: `int f() {
+      return 0;
+      }`, detail: "function"},
+            {label: "int", type: "variable", apply: "int x=0;",detail:  "create a int variable"},
+            {label: "for", type: "loop", apply: `for(int i=0; i<n;i++) {
+      }`,detail:  "create a for i=0;i<n;i++"},
+            {label: "while", type: "loop", apply: `while() {
+      }`,detail:  "create a while"},
+            {label: "hello world", type: "text", apply: `#include <stdio.h>
+int main() {
+   printf("Hello World");
+   return 0;
+}`, detail: "macro"}
         ]
     }
 }
+
 
 export const codeblock = createReactBlockSpec({
     type: "codeblock", propSchema: {
@@ -47,24 +56,21 @@ export const codeblock = createReactBlockSpec({
         const {mode} = useContext(ColorModeContext);
         const [output, write] = useState<string>("");
         const [isExecuting, setExecutingState] = useState(false);
+        const api = useMemo(() => {
+            return new API({
+                hostWrite: (stdout: string) => write(state => state + (stdout ?? "")), hostRead: () => prompt()
+            });
+        }, []);
 
         function execute(code: string) {
             setExecutingState(true);
             write("");
-            importPyodide().then(pyodide => {
-                pyodide.setStdin({stdin: () => prompt()});
-                pyodide.setStderr({stdin: (output: React.SetStateAction<string>) => write(output)});
-                pyodide.setStdout({
-                    raw: (charcode: number) => {
-                        write(state => state + String.fromCharCode(charcode));
-                    }
-                });
-                return pyodide.runPythonAsync(code);
-            }).then(stdout => {
-                write(state => state + (stdout ?? ""));
-                setExecutingState(false);
-            }).catch(output => {
-                write(output.message);
+            api.compileLinkRun(code)
+                .then((stdout: string) => {
+                    write(state => state + (stdout ?? ""));
+                    setExecutingState(false);
+                }).catch((error: any) => {
+                write(error.message);
                 setExecutingState(false);
             })
         }
@@ -86,7 +92,7 @@ export const codeblock = createReactBlockSpec({
                             execute(command.state.doc.toString());
                             return true;
                         }
-                    }])), python(), color, hyperLink]}
+                    }])), cpp(), autocompletion({ override: [autocompleteCpp] }), color, hyperLink]}
                     theme={mode === "dark" ? materialDark : materialLight}
                 />
                 <Box sx={{position: 'absolute', top: '0.15em', right: '0.15em'}}>
