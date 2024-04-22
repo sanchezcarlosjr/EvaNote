@@ -6,7 +6,7 @@ export function useContextMenu() {
         mouseX: number; mouseY: number; item_id?: string;
     } | null>(null);
 
-    const onContextMenu = (event: React.MouseEvent & {resource_name?: string}) => {
+    const onContextMenu = (event: React.MouseEvent & {id?: string}) => {
         event.preventDefault();
         setContextMenu(contextMenu === null ? {
                 mouseX: event.clientX + 2, mouseY: event.clientY - 6, item_id: event?.id

@@ -25,7 +25,7 @@ export class URIAssociation {
 
     map(resource: ResourceProps & {parent: string|undefined, access: '*' | 'can_edit' | 'can_input' | 'can_comment' | 'can_view'}): IResourceItem {
         const uri = this.find(resource?.meta?.['content-type'] ?? "");
-        let application = uri?.servicePreferenceOrder[0] ?? "evanotebook";
+        const application = uri?.servicePreferenceOrder[0] ?? "evanotebook";
         return {
             name: resource.name,
             meta: {
@@ -37,7 +37,7 @@ export class URIAssociation {
             },
             list: `/${application}/${resource.name}`,
             edit:  ((resource.access == '*' || resource.access == 'can_edit' ) || undefined) && `/resources/new?parent=${resource.name}`,
-            onContextMenu: `/${application}/${resource.name}`,
+            show: `/${application}/${resource.name}`,
             create: ((resource.access == '*' || resource.access == 'can_edit' ) || undefined) && `/resources/new?parent=${resource.name}`,
         };
     }

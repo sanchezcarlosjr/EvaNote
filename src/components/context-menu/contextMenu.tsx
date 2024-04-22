@@ -126,7 +126,7 @@ export function ContextMenu(props: {
             </MenuItem>
             <MenuItem onClick={() => {
                 close();
-                writeText(import.meta.env.VITE_BASE_URL+resource?.list as string).then();
+                writeText(import.meta.env.VITE_HOSTNAME_URL+resource?.list as string).then();
             }}>
                 <ListItemIcon>
                     <InsertLinkOutlined fontSize="small"/>
@@ -161,7 +161,7 @@ export function ContextMenu(props: {
             </MenuItem>
             <MenuItem
                 component="a"
-                href={import.meta.env.VITE_BASE_URL+resource?.list as string} target={'_blank'}>
+                href={import.meta.env.VITE_HOSTNAME_URL+resource?.list as string} target={'_blank'}>
                 <ListItemIcon>
                     <LaunchOutlined fontSize="small"/>
                 </ListItemIcon>
