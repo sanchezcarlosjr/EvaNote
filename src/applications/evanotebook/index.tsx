@@ -28,15 +28,16 @@ import "katex/dist/katex.min.css";
 import {
     BlockNoteEditor, BlockNoteSchema, defaultBlockSpecs, filterSuggestionItems, insertOrUpdateBlock
 } from "@blocknote/core";
-import {Code, FormatListNumbered, QuestionMarkOutlined} from '@mui/icons-material';
+import {Announcement, Code, FormatListNumbered, QuestionMarkOutlined} from '@mui/icons-material';
 import {Identity} from "../../providers/identity";
 import {codeblock} from "./codeBlock";
 import {mermaidblock} from "./mermaidChart";
 import {AIButton} from "./AIButton";
+import {Alert} from "./Alert";
 
 const schema = BlockNoteSchema.create({
     blockSpecs: {
-        ...defaultBlockSpecs, codeblock: codeblock, mermaidblock: mermaidblock
+        ...defaultBlockSpecs, codeblock: codeblock, mermaidblock: mermaidblock,  alert: Alert,
     },
 });
 
@@ -67,8 +68,29 @@ const insertMermaid = (editor: typeof schema.BlockNoteEditor) => ({
 });
 
 
+// Slash menu item to insert an Alert block
+const insertAlert = (editor: typeof schema.BlockNoteEditor) => ({
+    title: "Alert",
+    onItemClick: () => {
+        insertOrUpdateBlock(editor, {
+            type: "alert",
+        });
+    },
+    aliases: [
+        "alert",
+        "notification",
+        "emphasize",
+        "warning",
+        "error",
+        "info",
+        "success",
+    ],
+    group: "Other",
+    icon: <Announcement />,
+});
+
 // List containing all default Slash Menu Items, as well as our custom one.
-const getCustomSlashMenuItems = (editor: typeof schema.BlockNoteEditor): DefaultReactSuggestionItem[] => [...getDefaultReactSlashMenuItems(editor), insertMermaid(editor), insertCode(editor)];
+const getCustomSlashMenuItems = (editor: typeof schema.BlockNoteEditor): DefaultReactSuggestionItem[] => [...getDefaultReactSlashMenuItems(editor), insertMermaid(editor), insertCode(editor), insertAlert(editor)];
 
 const Application: React.FC<IResourceComponentsProps> = () => {
     const {mode} = useContext(ColorModeContext);
