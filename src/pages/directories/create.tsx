@@ -4,14 +4,14 @@ import {Create} from "@refinedev/mui";
 import {useForm} from "@refinedev/react-hook-form";
 import Typography from "@mui/material/Typography";
 import {useQuery} from "../../utility/useQuery";
-import {useEffect} from "react";
+import {useEffect, useMemo} from "react";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 
 
 export const DirectoryCreate: React.FC<IResourceComponentsProps> = () => {
     const params = useQuery();
-    const parent = params.get('parent') ?? "";
+    const parent = useMemo(() => params.get('parent'), [params]);
 
     const {
         reset,

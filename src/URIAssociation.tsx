@@ -37,7 +37,7 @@ export class URIAssociation {
             },
             list: `/${application}/${resource.name}`,
             edit:  ((resource.access == '*' || resource.access == 'can_edit' ) || undefined) && `/resources/new?parent=${resource.name}`,
-            show: `/${application}/${resource.name}`,
+            onContextMenu: `/${application}/${resource.name}`,
             create: ((resource.access == '*' || resource.access == 'can_edit' ) || undefined) && `/resources/new?parent=${resource.name}`,
         };
     }

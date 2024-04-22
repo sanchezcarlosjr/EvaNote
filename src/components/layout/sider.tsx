@@ -90,60 +90,10 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
     }, [defaultOpenKeys]);
 
     const {
-        contextMenu: {contextMenu, close, show}
+        contextMenu: {contextMenu, close, onContextMenu}
     }  = useContextMenu();
 
     const RenderToTitle = TitleFromProps ?? TitleFromContext ?? DefaultTitle;
-
-    const handleClick = (key: string) => {
-        setOpen({...open, [key]: !open[key]});
-    };
-
-    const dashboard = hasDashboard ? (
-        <CanAccess resource="dashboard" action="list">
-            <Tooltip
-                title={translate("dashboard.title", "Dashboard")}
-                placement="right"
-                disableHoverListener={!siderCollapsed}
-                arrow
-            >
-                <ListItemButton
-                    component={ActiveLink}
-                    to="/"
-                    selected={selectedKey === "/"}
-                    onClick={() => {
-                        setMobileSiderOpen(false);
-                    }}
-                    sx={{
-                        pl: 2,
-                        py: 1,
-                        justifyContent: "center",
-                        color: selectedKey === "/" ? "primary.main" : "text.primary",
-                    }}
-                >
-                    <ListItemIcon
-                        sx={{
-                            justifyContent: "center",
-                            minWidth: "24px",
-                            transition: "margin-right 0.3s",
-                            marginRight: siderCollapsed ? "0px" : "12px",
-                            color: "currentColor",
-                            fontSize: "14px",
-                        }}
-                    >
-                        <Dashboard/>
-                    </ListItemIcon>
-                    <ListItemText
-                        primary={translate("dashboard.title", "Dashboard")}
-                        primaryTypographyProps={{
-                            noWrap: true,
-                            fontSize: "14px",
-                        }}
-                    />
-                </ListItemButton>
-            </Tooltip>
-        </CanAccess>
-    ) : null;
 
     const {query} = useKBar();
 
@@ -188,13 +138,12 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
         </Tooltip>
     );
 
-    const items = <ResourceView tree={menuItems} selectedKey={selectedKey} />;
+    const items = <ResourceView onContextMenu={onContextMenu} tree={menuItems} selectedKey={selectedKey} />;
 
     const renderSider = () => {
         return (
             <>
                 {kbar}
-                {dashboard}
                 {items}
             </>
         );
@@ -213,7 +162,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
     );
 
     return (
-        <div onContextMenu={show}>
+        <div onContextMenu={onContextMenu}>
             <Box
                 sx={{
                     width: {xs: drawerWidth()},

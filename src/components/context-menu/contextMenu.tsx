@@ -23,20 +23,27 @@ import {
 } from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import {useGo} from "@refinedev/core";
+import {useGo, useResource} from "@refinedev/core";
+import {useClipboard} from "../../browserApis/clipboard";
+import {Link} from "react-router-dom";
 
-export function ContextMenu({contextMenu, close}: {
-    contextMenu: { mouseX: number; mouseY: number; } | null,
+type ContextMenuEvent = { mouseX: number; mouseY: number; item_id?: string } | null;
+
+export function ContextMenu(props: {
+    contextMenu: ContextMenuEvent,
     close: () => void
 }) {
+    const {contextMenu, close} = props;
     const go = useGo();
+    const {resource} = useResource(contextMenu?.item_id);
+    const {writeText} = useClipboard();
+    if (!contextMenu)
+        return null;
     return <Menu
-        open={contextMenu !== null}
+        open={true}
         anchorReference="anchorPosition"
         anchorPosition={
-            contextMenu !== null
-                ? {top: contextMenu.mouseY, left: contextMenu.mouseX}
-                : undefined
+            {top: contextMenu.mouseY, left: contextMenu.mouseX}
         }
         anchorOrigin={{
             vertical: 'center',
@@ -51,47 +58,17 @@ export function ContextMenu({contextMenu, close}: {
             <MenuItem onClick={() => {
                 close();
                 go({
-                   to: '/create',
+                   to: `/resources/new${contextMenu?.item_id ? `?parent=${contextMenu?.item_id}` : ""}`,
                    type: "push",
                 });
             }}>
                 <ListItemText>New</ListItemText>
             </MenuItem>
             <Divider/>
-            <MenuItem onClick={close}>
-                <ListItemIcon>
-                    <FileOpenOutlined fontSize="small"/>
-                </ListItemIcon>
-                <ListItemText>Open with EvaNotebook</ListItemText>
-                <Typography variant="body2" color="text.secondary">
-                </Typography>
-            </MenuItem>
-            <MenuItem onClick={close}>
-                <ListItemIcon>
-                    <FileOpenOutlined fontSize="small"/>
-                </ListItemIcon>
-                <ListItemText>Open with</ListItemText>
-                <Typography variant="body2" color="text.secondary">
-                </Typography>
-            </MenuItem>
-            <Divider/>
-            <MenuItem onClick={close}>
-                <ListItemIcon>
-                    <ContentCut fontSize="small"/>
-                </ListItemIcon>
-                <ListItemText>Cut</ListItemText>
-                <Typography variant="body2" color="text.secondary">
-                </Typography>
-            </MenuItem>
-            <MenuItem onClick={close}>
-                <ListItemIcon>
-                    <ContentCopyOutlined fontSize="small"/>
-                </ListItemIcon>
-                <ListItemText>Copy</ListItemText>
-                <Typography variant="body2" color="text.secondary">
-                </Typography>
-            </MenuItem>
-            <MenuItem onClick={close}>
+            <MenuItem onClick={() => {
+                close();
+                writeText(resource?.list as string).then();
+            }} data-test="copy-location">
                 <ListItemIcon>
                     <FolderCopyOutlined fontSize="small"/>
                 </ListItemIcon>
@@ -99,7 +76,10 @@ export function ContextMenu({contextMenu, close}: {
                 <Typography variant="body2" color="text.secondary">
                 </Typography>
             </MenuItem>
-            <MenuItem onClick={close}>
+            <MenuItem onClick={() => {
+                close();
+                writeText(resource?.meta?.label as string).then();
+            }}>
                 <ListItemIcon>
                     <FolderCopyOutlined fontSize="small"/>
                 </ListItemIcon>
@@ -144,7 +124,10 @@ export function ContextMenu({contextMenu, close}: {
                 <Typography variant="body2" color="text.secondary">
                 </Typography>
             </MenuItem>
-            <MenuItem onClick={close}>
+            <MenuItem onClick={() => {
+                close();
+                writeText(import.meta.env.VITE_BASE_URL+resource?.list as string).then();
+            }}>
                 <ListItemIcon>
                     <InsertLinkOutlined fontSize="small"/>
                 </ListItemIcon>
@@ -176,7 +159,9 @@ export function ContextMenu({contextMenu, close}: {
                 <Typography variant="body2" color="text.secondary">
                 </Typography>
             </MenuItem>
-            <MenuItem onClick={close}>
+            <MenuItem
+                component="a"
+                href={import.meta.env.VITE_BASE_URL+resource?.list as string} target={'_blank'}>
                 <ListItemIcon>
                     <LaunchOutlined fontSize="small"/>
                 </ListItemIcon>

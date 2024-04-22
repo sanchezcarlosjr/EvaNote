@@ -4,20 +4,26 @@ import {CustomTreeItem} from "./item";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import {ITreeMenu} from "@refinedev/core";
-import {TreeItem} from "@mui/x-tree-view/TreeItem";
+
+
+type ContextMenuEvent = React.MouseEvent & {id: string};
 
 export interface ResourceViewProps {
     tree: ITreeMenu[];
     selectedKey?: string;
+    onContextMenu:  React.MouseEventHandler<HTMLLIElement> | undefined;
 }
 
-const renderTreeView = (tree: ITreeMenu[]) =>
+const renderTreeView = (tree: ITreeMenu[], onContextMenu: any) =>
     (
         tree.map(item =>
             {
-                return <CustomTreeItem key={item?.list as string} icon={item.meta?.icon} nodeId={item?.list as string ?? ""}  label={item.meta?.label ?? item.name}>
+                return <CustomTreeItem onContextMenu={e => {
+                    (e as unknown as ContextMenuEvent).id = item?.name;
+                    onContextMenu(e);
+                }} key={item?.list as string} icon={item.meta?.icon} nodeId={item?.list as string ?? ""}  label={item.meta?.label ?? item.name}>
                     {
-                        renderTreeView(item.children)
+                        renderTreeView(item.children, onContextMenu)
                     }
                 </CustomTreeItem>
             }
@@ -33,7 +39,7 @@ export default function ResourceView(resourceViewProps: ResourceViewProps) {
             sx={{flexGrow: 1}}
     >
         {
-            renderTreeView(resourceViewProps.tree)
+            renderTreeView(resourceViewProps.tree, resourceViewProps.onContextMenu)
         }
         </TreeView>);
 }
