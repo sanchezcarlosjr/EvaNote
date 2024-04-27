@@ -1,20 +1,27 @@
-import {ToolbarButton,} from "@blocknote/react";
-import {formatKeyboardShortcut} from "@blocknote/core";
-import {QuestionMarkOutlined} from "@mui/icons-material";
+import {ToolbarButton, useBlockNoteEditor, useSelectedBlocks,} from "@blocknote/react";
+import {BlockSchema, formatKeyboardShortcut, InlineContentSchema, StyleSchema} from "@blocknote/core";
 import remoteProcedureCaller from "../../events/remoteProcedureCaller";
 import {useNotification} from "@refinedev/core";
 import Handlebars from "handlebars";
-import {ReactElement} from "react";
+import {ReactElement, useMemo} from "react";
 
 export interface AIButtonProps {
     mainTooltip: string;
     userPrompt: string;
-    shortcut: string;
+    shortcut?: string;
+    blockType: string;
     children: string | ReactElement
 }
 
-export function AIButton({mainTooltip, shortcut, userPrompt, children}: AIButtonProps) {
+export function AIButton({mainTooltip, shortcut, userPrompt, children, blockType}: AIButtonProps) {
     const {open} = useNotification();
+    const editor = useBlockNoteEditor<BlockSchema, InlineContentSchema, StyleSchema>();
+    const selectedBlocks = useSelectedBlocks(editor);
+
+    const filteredItems = useMemo(() => selectedBlocks.filter(block => block.type == blockType), []);
+
+    if (filteredItems.length != selectedBlocks.length || filteredItems.length == 0) return null;
+
     const onClick = async () => {
         try {
             const template = Handlebars.compile(userPrompt);
@@ -29,10 +36,10 @@ export function AIButton({mainTooltip, shortcut, userPrompt, children}: AIButton
     }
 
     return (<ToolbarButton
-            onClick={onClick}
-            mainTooltip={mainTooltip}
-            secondaryTooltip={formatKeyboardShortcut(shortcut)}
-        >
-           {children}
-        </ToolbarButton>);
+        onClick={onClick}
+        mainTooltip={mainTooltip}
+        secondaryTooltip={shortcut ? formatKeyboardShortcut(shortcut) : shortcut}
+    >
+        {children}
+    </ToolbarButton>);
 }

@@ -1,11 +1,9 @@
-import {IResourceComponentsProps, ResourceContext, useGetIdentity} from "@refinedev/core";
-import React, {useContext, useEffect, useLayoutEffect} from "react";
-import {ColorModeContext} from "../../contexts/color-mode";
-import {Button, CircularProgress, useMediaQuery} from "@mui/material";
+import {IResourceComponentsProps, useGetIdentity} from "@refinedev/core";
+import React, {useContext, useEffect} from "react";
+import {CircularProgress} from "@mui/material";
 import {ProvisionContext} from "../../contexts/provision";
 import {match, P} from "ts-pattern";
-import {redirect, useNavigate} from "react-router-dom";
-
+import {useNavigate} from "react-router-dom";
 
 
 const Application: React.FC<IResourceComponentsProps> = () => {
@@ -13,8 +11,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
     const {data: identity} = useGetIdentity<any>();
     const navigate = useNavigate();
     useEffect(() => {
-        if (!playbook || !resources || resources.length === 0)
-            return;
+        if (!playbook || !resources || resources.length === 0) return;
         const route = match(playbook.settings.applications.indexer.redirect_policy)
             .with(P.string.regex(/^(always) ([\/A-Z-?"']+)$/i), (redirect_policy: string) => {
                 const [_, param] = redirect_policy.split(" ");
@@ -25,8 +22,7 @@ const Application: React.FC<IResourceComponentsProps> = () => {
         navigate(route);
     }, [resources, playbook]);
 
-    if (!identity || !identity?.color)
-         return <CircularProgress/>;
+    if (!identity || !identity?.color) return <CircularProgress/>;
 
     return null;
 };

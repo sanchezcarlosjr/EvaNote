@@ -103,10 +103,13 @@ export function PlaybookExecutor() {
     const context = useContext(ProvisionContext);
     const {data: identity} = useGetIdentity<Identity>();
     const {data} = useList({
-        resource: 'web',
+        resource: 'resources',
         liveMode: 'auto',
         pagination: {
-            pageSize: 100
+            pageSize: 1000
+        },
+        meta: {
+            select: "name,meta,created_at,...access(access:access), resource_permissions(user_id, access), ...valid_parent(parent:name)"
         }
     });
 

@@ -1,13 +1,12 @@
 import * as React from 'react';
-import {styled} from '@mui/material/styles';
+import {useState} from 'react';
 import Box from '@mui/material/Box';
 
-import {TreeItem, treeItemClasses, TreeItemContentProps, TreeItemProps, useTreeItem} from '@mui/x-tree-view/TreeItem';
+import {TreeItem, TreeItemContentProps, TreeItemProps, useTreeItem} from '@mui/x-tree-view/TreeItem';
 import clsx from "clsx";
 import {Button, Fade, IconButton} from "@mui/material";
 import {useCan, useLink} from "@refinedev/core";
-import {Add, AddRounded} from "@mui/icons-material";
-import {useState} from "react";
+import {AddRounded} from "@mui/icons-material";
 
 const CustomContent = React.forwardRef(function CustomContent(props: TreeItemContentProps, ref,) {
     const {
@@ -35,8 +34,7 @@ const CustomContent = React.forwardRef(function CustomContent(props: TreeItemCon
 
     const [showCreateButton, setShowCreateButton] = useState(false);
     const {data} = useCan({
-        action: 'create',
-        resource: 'resources'
+        action: 'create', resource: 'resources'
     });
 
     const parts = nodeId.split("/");
@@ -70,20 +68,19 @@ const CustomContent = React.forwardRef(function CustomContent(props: TreeItemCon
                 startIcon={icon}
                 size="small"
                 color="inherit"
-                onClick={handleSelectionClick} sx={{fontWeight: 'inherit', flexGrow: 1, textTransform: 'none', justifyContent: "left"}}>
+                onClick={handleSelectionClick}
+                sx={{fontWeight: 'inherit', flexGrow: 1, textTransform: 'none', justifyContent: "left"}}>
                 {label}
             </Button>
-            {
-                data?.can && <Fade in={showCreateButton}>
-                    <IconButton
-                        sx={{p: 0}}
-                        component={Link}
-                        to={`/resources/new?parent=${parentId}`}
-                    >
-                        <AddRounded />
-                    </IconButton>
-                </Fade>
-            }
+            {data?.can && <Fade in={showCreateButton}>
+                <IconButton
+                    sx={{p: 0}}
+                    component={Link}
+                    to={`/resources/new?parent=${parentId}`}
+                >
+                    <AddRounded/>
+                </IconButton>
+            </Fade>}
         </Box>);
 });
 

@@ -1,5 +1,5 @@
-import {IResourceComponentsProps, ResourceContext, useGetIdentity} from "@refinedev/core";
-import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
+import {IResourceComponentsProps} from "@refinedev/core";
+import React, {useEffect, useState} from "react";
 import mermaid from 'mermaid';
 import Stack from "@mui/material/Stack";
 
@@ -8,15 +8,13 @@ const Application: React.FC<IResourceComponentsProps> = () => {
     const [data, setData] = useState('');
     useEffect(() => {
         mermaid.initialize({
-            startOnLoad: false,
-            securityLevel: 'loose',
-            theme: 'base',
+            startOnLoad: false, securityLevel: 'loose', theme: 'base',
         });
         (async () => {
             await mermaid.run({
                 suppressErrors: true,
             });
-            const { svg } = await mermaid.render('dx', `---
+            const {svg} = await mermaid.render('dx', `---
 title: Homework
 ---
 flowchart LR
@@ -41,7 +39,7 @@ flowchart LR
     }, []);
     return <Stack>
         <h1>User progress</h1>
-        <div dangerouslySetInnerHTML={{__html: data}} ></div>
+        <div dangerouslySetInnerHTML={{__html: data}}></div>
     </Stack>;
 };
 

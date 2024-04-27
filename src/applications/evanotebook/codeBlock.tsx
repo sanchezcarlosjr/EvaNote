@@ -58,7 +58,8 @@ export const codeblock = createReactBlockSpec({
         const [isExecuting, setExecutingState] = useState(false);
         const api = useMemo(() => {
             return new API({
-                hostWrite: (stdout: string) => write(state => state + (stdout ?? "")), hostRead: () => prompt()
+                hostWrite: (stdout: string) => write(state => state + (stdout ?? "")),
+                hostRead: () => prompt()
             });
         }, []);
 

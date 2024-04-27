@@ -1,26 +1,19 @@
 import {IResourceComponentsProps, useGetIdentity, useNavigation, useNotification} from "@refinedev/core";
 import "@blocknote/react/style.css";
-import React, {ChangeEvent, useContext, useEffect, useRef, useState} from "react";
-import {ColorModeContext} from "../../contexts/color-mode";
+import React, {useContext, useEffect, useState} from "react";
 import {useQuery} from "../../utility/useQuery";
 
 import {TextareaAutosize as BaseTextareaAutosize} from '@mui/base/TextareaAutosize';
 import {styled} from '@mui/system';
 import {ProvisionContext} from "../../contexts/provision";
 import {CircularProgress} from "@mui/material";
-import Application from "../indexer";
 
 function UnstyledTextareaIntroduction() {
-    return <TextareaAutosize aria-label="empty textarea" placeholder="Empty" />;
+    return <TextareaAutosize aria-label="empty textarea" placeholder="Empty"/>;
 }
 
 const blue = {
-    100: '#DAECFF',
-    200: '#b6daff',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E5',
-    900: '#003A75',
+    100: '#DAECFF', 200: '#b6daff', 400: '#3399FF', 500: '#007FFF', 600: '#0072E5', 900: '#003A75',
 };
 
 const grey = {
@@ -36,8 +29,7 @@ const grey = {
     900: '#1C2025',
 };
 
-const TextareaAutosize = styled(BaseTextareaAutosize)(
-    ({ theme }) => `
+const TextareaAutosize = styled(BaseTextareaAutosize)(({theme}) => `
   box-sizing: border-box;
   width: 320px;
   font-size: 0.875rem;
@@ -64,9 +56,7 @@ const TextareaAutosize = styled(BaseTextareaAutosize)(
   &:focus-visible {
     outline: 0;
   }
-`,
-);
-
+`,);
 
 
 export const TextEditor: React.FC<IResourceComponentsProps> = () => {
@@ -75,13 +65,12 @@ export const TextEditor: React.FC<IResourceComponentsProps> = () => {
     const uri = new URL(url.get("uri") ?? "browser:/tmp/getting-started.txt");
     const {filesystem: fs} = useContext(ProvisionContext);
     const [value, setValue] = useState("");
-    const { push } = useNavigation();
-    const { open } = useNotification();
+    const {push} = useNavigation();
+    const {open} = useNotification();
 
 
     useEffect(() => {
-        if (!fs)
-            return;
+        if (!fs) return;
         if (!fs.existsSync(uri.pathname)) {
             push('/not-found');
             open?.({
@@ -95,8 +84,7 @@ export const TextEditor: React.FC<IResourceComponentsProps> = () => {
         setValue(fs.readFileSync(uri.pathname, 'utf-8'));
     }, [fs, uri.pathname]);
 
-    if (!identity && !identity?.color)
-        return <CircularProgress />;
+    if (!identity && !identity?.color) return <CircularProgress/>;
 
     return <TextareaAutosize value={value} onChange={e => {
         fs.writeFileSync(uri.pathname, e.target.value);

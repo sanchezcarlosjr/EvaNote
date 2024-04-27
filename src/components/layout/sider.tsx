@@ -1,29 +1,11 @@
-import React, {CSSProperties, useState} from "react";
+import React, {useState} from "react";
 import {
-    CanAccess,
-    ITreeMenu,
-    pickNotDeprecated,
-    useActiveAuthProvider,
-    useIsExistAuthentication,
-    useLink,
-    useLogout,
-    useMenu,
-    useRefineContext,
-    useRouterContext,
-    useRouterType,
-    useTitle,
-    useTranslate,
-    useWarnAboutChange,
+    useActiveAuthProvider, useLink, useMenu, useRefineContext, useRouterContext, useRouterType, useTitle, useTranslate,
 } from "@refinedev/core";
 import type {RefineThemedLayoutV2SiderProps} from "@refinedev/mui";
 import {ThemedTitleV2 as DefaultTitle,} from "@refinedev/mui";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
-import Dashboard from "@mui/icons-material/Dashboard";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import ListOutlined from "@mui/icons-material/ListOutlined";
 import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
@@ -33,12 +15,10 @@ import ListItemText from "@mui/material/ListItemText";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import {Search} from "@mui/icons-material";
-import {createAction, Priority, useKBar, useRegisterActions} from "@refinedev/kbar";
+import {useKBar} from "@refinedev/kbar";
 import {useContextMenu} from "../context-menu/useContextMenu";
 import {ContextMenu} from "../context-menu/contextMenu";
 import {useThemedLayoutContext} from "./useThemedLayoutContext";
-import {Button, ListItem} from "@mui/material";
-import Typography from "@mui/material/Typography";
 import ResourceView from "../resource-view";
 
 
@@ -49,10 +29,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
                                                                             activeItemDisabled = false,
                                                                         }) => {
     const {
-        siderCollapsed,
-        setSiderCollapsed,
-        mobileSiderOpen,
-        setMobileSiderOpen,
+        siderCollapsed, setSiderCollapsed, mobileSiderOpen, setMobileSiderOpen,
     } = useThemedLayoutContext();
 
     const drawerWidth = () => {
@@ -82,23 +59,20 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
             const previousOpenKeys = previousKeys.filter((key) => previous[key]);
 
             const uniqueKeys = new Set([...previousOpenKeys, ...defaultOpenKeys]);
-            const uniqueKeysRecord = Object.fromEntries(
-                Array.from(uniqueKeys.values()).map((key) => [key, true])
-            );
+            const uniqueKeysRecord = Object.fromEntries(Array.from(uniqueKeys.values()).map((key) => [key, true]));
             return uniqueKeysRecord;
         });
     }, [defaultOpenKeys]);
 
     const {
         contextMenu: {contextMenu, close, onContextMenu}
-    }  = useContextMenu();
+    } = useContextMenu();
 
     const RenderToTitle = TitleFromProps ?? TitleFromContext ?? DefaultTitle;
 
     const {query} = useKBar();
 
-    const kbar = (
-        <Tooltip
+    const kbar = (<Tooltip
             title={t("buttons.search", "Search") + " Ctrl+K"}
             placement="right"
             disableHoverListener={!siderCollapsed}
@@ -126,60 +100,45 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
                     primary={t("buttons.search", "Search")}
                     secondary={"Ctrl+K"}
                     secondaryTypographyProps={{
-                        noWrap: true,
-                        fontSize: "10px",
+                        noWrap: true, fontSize: "10px",
                     }}
                     primaryTypographyProps={{
-                        noWrap: true,
-                        fontSize: "14px",
+                        noWrap: true, fontSize: "14px",
                     }}
                 />
             </ListItemButton>
-        </Tooltip>
-    );
+        </Tooltip>);
 
-    const items = <ResourceView onContextMenu={onContextMenu} tree={menuItems} selectedKey={selectedKey} />;
+    const items = <ResourceView onContextMenu={onContextMenu} tree={menuItems} selectedKey={selectedKey}/>;
 
     const renderSider = () => {
-        return (
-            <>
+        return (<>
                 {kbar}
                 {items}
-            </>
-        );
+            </>);
     };
 
-    const drawer = (
-        <List
+    const drawer = (<List
             disablePadding
             sx={{
-                flexGrow: 1,
-                paddingTop: "16px",
+                flexGrow: 1, paddingTop: "16px",
             }}
         >
             {renderSider()}
-        </List>
-    );
+        </List>);
 
-    return (
-        <div onContextMenu={onContextMenu}>
+    return (<div onContextMenu={onContextMenu}>
             <Box
                 sx={{
-                    width: {xs: drawerWidth()},
-                    display: {
-                        xs: "none",
-                        md: "block",
-                    },
-                    transition: "width 0.3s ease",
+                    width: {xs: drawerWidth()}, display: {
+                        xs: "none", md: "block",
+                    }, transition: "width 0.3s ease",
                 }}
             />
             <Box
                 component="nav"
                 sx={{
-                    position: "fixed",
-                    zIndex: 2,
-                    width: {sm: drawerWidth()},
-                    display: "flex",
+                    position: "fixed", zIndex: 2, width: {sm: drawerWidth()}, display: "flex",
                 }}
             >
                 <Drawer
@@ -192,8 +151,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
                     }}
                     sx={{
                         display: {
-                            sm: "block",
-                            md: "none",
+                            sm: "block", md: "none",
                         },
                     }}
                 >
@@ -220,10 +178,7 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
                     variant="permanent"
                     anchor="left"
                     sx={{
-                        display: {xs: "none", md: "block"},
-                        width: drawerWidth,
-                        flexShrink: 0,
-                        "& .MuiDrawer-paper": {
+                        display: {xs: "none", md: "block"}, width: drawerWidth, flexShrink: 0, "& .MuiDrawer-paper": {
                             width: drawerWidth(),
                             overflow: "hidden",
                             zIndex: 0,
@@ -246,22 +201,17 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
                             paddingRight: siderCollapsed ? 0 : "8px",
                             variant: "outlined",
                             borderRadius: 0,
-                            borderBottom: (theme) =>
-                                `1px solid ${theme.palette.action.focus}`,
+                            borderBottom: (theme) => `1px solid ${theme.palette.action.focus}`,
                         }}
                     >
                         <RenderToTitle collapsed={siderCollapsed}/>
-                        {!siderCollapsed && (
-                            <IconButton size="small" onClick={() => setSiderCollapsed(true)}>
+                        {!siderCollapsed && (<IconButton size="small" onClick={() => setSiderCollapsed(true)}>
                                 {<ChevronLeft/>}
-                            </IconButton>
-                        )}
+                            </IconButton>)}
                     </Paper>
                     <Box
                         sx={{
-                            flexGrow: 1,
-                            overflowX: "hidden",
-                            overflowY: "auto",
+                            flexGrow: 1, overflowX: "hidden", overflowY: "auto",
                         }}
                     >
                         {drawer}
@@ -269,6 +219,5 @@ export const ThemedSiderV2: React.FC<RefineThemedLayoutV2SiderProps> = ({
                 </Drawer>
             </Box>
             {<ContextMenu contextMenu={contextMenu} close={close}/>}
-        </div>
-    );
+        </div>);
 };

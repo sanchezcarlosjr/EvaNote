@@ -23,9 +23,11 @@ import {
 } from "@mui/icons-material";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import {useGo, useResource} from "@refinedev/core";
+import {useForm, useGo, useResource} from "@refinedev/core";
 import {useClipboard} from "../../browserApis/clipboard";
-import {Link} from "react-router-dom";
+import {Doc,applyUpdate,encodeStateAsUpdate, encodeStateVector} from "yjs";
+import {IndexeddbPersistence} from "y-indexeddb";
+import YPartyKitProvider from "y-partykit/provider";
 
 type ContextMenuEvent = { mouseX: number; mouseY: number; item_id?: string } | null;
 
@@ -37,6 +39,13 @@ export function ContextMenu(props: {
     const go = useGo();
     const {resource} = useResource(contextMenu?.item_id);
     const {writeText} = useClipboard();
+    const {
+        onFinish
+    } = useForm<any, any, any, any>({
+        action: "create",
+        resource: "resources",
+        redirect: false
+    });
     if (!contextMenu)
         return null;
     return <Menu
@@ -85,7 +94,26 @@ export function ContextMenu(props: {
                 </ListItemIcon>
                 <ListItemText>Copy Name</ListItemText>
             </MenuItem>
-            <MenuItem onClick={close}>
+            <MenuItem onClick={() => {
+                const name = contextMenu?.item_id as string;
+                const oldDoc = new Doc();
+                new IndexeddbPersistence(name, oldDoc);
+                const stateVector = encodeStateVector(oldDoc);
+                const update = encodeStateAsUpdate(oldDoc, stateVector);
+                const newDoc = new Doc();
+                applyUpdate(newDoc, update);
+                const newName = crypto.randomUUID();
+                new YPartyKitProvider("blocknote-dev.yousefed.partykit.dev", newName, newDoc)
+                new IndexeddbPersistence(newName, oldDoc);
+                onFinish({
+                    name: newName,
+                    parent: resource?.meta?.parent ?? undefined,
+                    meta: {
+                        label: resource?.meta?.label || alert(),
+                        'content-type': 'nb'
+                    }
+                }).then();
+            }}>
                 <ListItemIcon>
                     <CopyAllOutlined fontSize="small"/>
                 </ListItemIcon>

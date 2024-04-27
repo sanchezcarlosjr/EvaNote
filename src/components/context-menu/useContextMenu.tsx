@@ -8,12 +8,13 @@ export function useContextMenu() {
 
     const onContextMenu = (event: React.MouseEvent & {id?: string}) => {
         event.preventDefault();
+        event.stopPropagation();
         setContextMenu(contextMenu === null ? {
                 mouseX: event.clientX + 2, mouseY: event.clientY - 6, item_id: event?.id
             } : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
                 // Other native context menus might behave different.
                 // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-            null,);
+            null);
     };
 
     const close = () => {
