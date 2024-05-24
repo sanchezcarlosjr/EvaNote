@@ -12,6 +12,14 @@ export function readStr(u8, o, len = -1) {
   return str
 }
 
+export function decodeToUtf8(u8, o, len = -1) {
+  if (len === -1) {
+    len = u8.length - o;
+  }
+  const slice = u8.subarray(o, o + len);
+  return new TextDecoder("utf-8").decode(slice);
+}
+
 export function assert(cond) {
   if (!cond) {
     throw new AssertError('assertion failed.')

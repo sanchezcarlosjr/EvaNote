@@ -1,4 +1,4 @@
-import { readStr } from './shared'
+import {decodeToUtf8, readStr} from './shared'
 
 export class Memory {
   constructor(memory) {
@@ -37,6 +37,10 @@ export class Memory {
     return readStr(this.u8, o, len)
   }
 
+  decodeUtf8(o, len) {
+    return decodeToUtf8(this.u8, o, len);
+  }
+
   // Null-terminated string.
   writeStr(o, str) {
     o += this.write(o, str)
@@ -50,7 +54,7 @@ export class Memory {
     } else if (typeof buf === 'string') {
       return this.write(
         o,
-        buf.split('').map((x) => x.charCodeAt(0))
+          new TextEncoder().encode(buf)
       )
     } else {
       const dst = new Uint8Array(this.buffer, o, buf.length)

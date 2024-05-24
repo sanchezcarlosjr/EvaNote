@@ -4,6 +4,9 @@ import { assert, ESUCCESS, getImportObject } from './shared'
 
 const memfsUrl = import.meta.env.BASE_URL+'/clang/memfs.wasm';
 
+
+
+
 export class MemFS {
   constructor(options) {
     this.hostWrite = options.hostWrite;
@@ -44,6 +47,9 @@ export class MemFS {
   }
 
   addFile(path, contents) {
+    if (typeof contents === 'string') {
+      contents = new TextEncoder().encode(contents);
+    }
     const length = contents instanceof ArrayBuffer ? contents.byteLength : contents.length
     this.mem.check()
     this.mem.write(this.exports.GetPathBuf(), path)
@@ -76,7 +82,7 @@ export class MemFS {
       iovs += 4
       const len = this.hostMem_.read32(iovs)
       iovs += 4
-      str += this.hostMem_.readStr(buf, len)
+      str += this.hostMem_.decodeUtf8(buf, len);
       size += len
     }
     this.hostMem_.write32(nwritten_out, size)
@@ -86,6 +92,7 @@ export class MemFS {
 
   host_read(fd, iovs, iovs_len, nread) {
     this.stdinStr = this.hostRead();
+    console.log(this.stdinStr);
     this.hostMem_.check()
     assert(fd === 0)
     let size = 0
