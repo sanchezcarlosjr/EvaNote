@@ -7,12 +7,22 @@ Web-based reactive computing platform
 ### Environment and settings
 ```.env.*.example``` files shows how you should write ```.env.*.local``` files. The latter are ignored by Git. Similarly, ```public/settings/service_registries.*``` files and ```public/settings/settings.*```  files allow you to define different settings and service registries by environment. These files are loaded at execution time using a template engine and Browser JSON Parser.
 
-## Available Scripts
+# Instructions for self-hosting and contributions.
+1. Clone the repository.
+```
+git clone git@github.com:sanchezcarlosjr/EvaNote.git && cd EvaNote && git submodule update --init --recursive
+```
+2. Install the dependencies
+```
+npm install
+```
+3. Start the project.
+```
+npm run dev
+```
 
-## Clone
-```
-git submodule update --init --recursive
-```
+
+## Available Scripts
 
 ### Running the development server.
 
