@@ -72,6 +72,7 @@
     "fake-indexeddb": "5.0.2",
     "happy-dom": "13.7.1",
     "jsdom": "24.0.0",
+    "lerna": "^8.1.6",
     "typescript": "5.3.3",
     "vite": "4.5.2",
     "vite-plugin-pwa": "0.17.5",
@@ -84,7 +85,9 @@
     "refine": "refine",
     "test": "vitest --ui --config ./vite.config.test.ts",
     "ui": "cypress open",
-    "build:local": "npm run build --workspaces"
+    "build:local": "npm run build --workspaces",
+    "preinstall": "npm run build-all",
+    "build-all": "lerna run build"
   },
   "browserslist": {
     "production": [
