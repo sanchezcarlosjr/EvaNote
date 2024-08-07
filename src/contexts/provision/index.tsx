@@ -40,7 +40,6 @@ export const ProvisionContext = createContext<ProvisionContextType>({
     widgets: {}
 } as ProvisionContextType);
 
-const mutex = new Mutex();
 
 const defaultRoutes = (defaultPlaybook as Playbook).dependencies.find(library => library.uri.match('in-memory:routes'))?.data ?? [];
 

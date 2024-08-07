@@ -9,8 +9,8 @@ const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <React.Suspense fallback="loading">
-      <App />
+    <React.Suspense fallback={<div className="lds-dual-ring-flex"><div className="lds-dual-ring"></div></div>}>
+        <App/>
     </React.Suspense>
   </React.StrictMode>
 );

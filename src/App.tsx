@@ -41,7 +41,6 @@ function ProvisionedRefine() {
         getLocale: () => i18n.language,
     };
 
-
     return (<ColorModeContextProvider>
             <CssBaseline/>
             <GlobalStyles styles={{
@@ -182,6 +181,36 @@ function ProvisionedRefine() {
                                     element={<AuthPage type="forgotPassword"/>}
                                 />
                             </Route>
+                            <Route
+                                path="/login"
+                                element={<AuthPage
+                                    type="login"
+                                    title={<ThemedTitleV2
+                                        collapsed={false}
+                                        text={import.meta.env.VITE_APP_NAME}
+                                        icon={<AppIcon/>}
+                                    />}
+
+                                    formProps={{
+                                        defaultValues: {
+                                            email: "", password: "",
+                                        },
+                                    }}
+                                    providers={[{
+                                        name: "google", label: "Sign in with Google", icon: <Google
+                                            style={{
+                                                fontSize: 18, lineHeight: 0,
+                                            }}
+                                        />
+                                    }, {
+                                        name: "github", label: "Sign in with GitHub", icon: <GitHub
+                                            style={{
+                                                fontSize: 18, lineHeight: 0,
+                                            }}
+                                        />
+                                    },]}
+                                />}
+                            />
                         </Routes>
                         <UnsavedChangesNotifier/>
                         <DocumentTitleHandler/>
